@@ -222,7 +222,7 @@ export default function DeathBenefitTaxWallCalculator() {
   const panel2 = calcSurvivorshipRisk(yourBalance, partnerBalance, pensionType);
   const combinedExposure = panel1.totalTax + panel2.div296Tax * 5;
   const calcTier = getTier(panel1.totalTax, panel2.div296Tax);
-  const effectiveTier: "email" | 67 | 147 = overrideTier ?? calcTier;
+  const effectiveTier = (overrideTier ?? calcTier) as "email" | 67 | 147;
   const product = effectiveTier !== "email" ? PRODUCTS[effectiveTier] : null;
 
   const answersComplete =
@@ -363,7 +363,7 @@ export default function DeathBenefitTaxWallCalculator() {
   const isHighRisk = effectiveTier === 147;
   const resultBg = isHighRisk ? "border-red-200 bg-red-50" : effectiveTier === 67 ? "border-amber-200 bg-amber-50" : "border-emerald-200 bg-emerald-50";
 
-  const priceAnchor = effectiveTier !== "email" && panel1.totalTax > 0
+  const priceAnchor = (effectiveTier === 67 || effectiveTier === 147) && panel1.totalTax > 0
     ? `$${effectiveTier} is ${((effectiveTier / panel1.totalTax) * 100).toFixed(1)}% of the ${fmt(panel1.totalTax)} your family is exposed to`
     : null;
 
@@ -839,7 +839,7 @@ export default function DeathBenefitTaxWallCalculator() {
             >
               {checkoutLoading
                 ? "Redirecting to payment..."
-                : effectiveTier !== "email"
+                : effectiveTier === 67 || effectiveTier === 147
                 ? `Continue to Payment — $${effectiveTier} →`
                 : "Save My Result →"}
             </button>
