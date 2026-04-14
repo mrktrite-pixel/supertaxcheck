@@ -2,14 +2,21 @@ import { NextResponse } from "next/server";
 import Stripe from "stripe";
 import { createClient } from "@supabase/supabase-js";
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
-  apiVersion: "2026-03-25.dahlia",
-});
+// Both Stripe and Supabase initialised inside handler
+// Prevents build failures when env variables not yet set in Vercel
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL as string,
-  process.env.SUPABASE_SERVICE_ROLE_KEY as string
-);
+function getStripe() {
+  const key = process.env.STRIPE_SECRET_KEY;
+  if (!key) throw new Error("Missing STRIPE_SECRET_KEY");
+  return new Stripe(key, { apiVersion: "2026-03-25.dahlia" });
+}
+
+function getSupabase() {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!url || !key) throw new Error("Missing Supabase environment variables");
+  return createClient(url, key);
+}
 
 export async function POST(req: Request) {
   const sig = req.headers.get("stripe-signature");
@@ -23,6 +30,7 @@ export async function POST(req: Request) {
   let event: Stripe.Event;
 
   try {
+    const stripe = getStripe();
     event = stripe.webhooks.constructEvent(
       rawBody,
       sig,
@@ -54,7 +62,8 @@ export async function POST(req: Request) {
         return NextResponse.json({ received: true });
       }
 
-      // Update the decision session in Supabase to mark as paid
+      const supabase = getSupabase();
+
       const { error } = await supabase
         .from("decision_sessions")
         .update({
@@ -73,10 +82,7 @@ export async function POST(req: Request) {
       }
 
       // AGENT_INJECTION_POINT — Phase 2
-      // Connect to VIDA here:
-      // Send email with download links + personalised documents
-      // Based on tier (67 = 6 files, 147 = 10 files)
-      // And questionnaire answers from decision_sessions record
+      // Connect to VIDA here to send personalised documents
     }
 
     return NextResponse.json({ received: true });

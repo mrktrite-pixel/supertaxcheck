@@ -1,19 +1,15 @@
 import { NextResponse } from "next/server";
 import Stripe from "stripe";
 
-const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
+// Stripe initialised inside handler — not at module level
+// Prevents build failures when env variables are not yet set in Vercel
 
-if (!stripeSecretKey) {
-  throw new Error("Missing STRIPE_SECRET_KEY");
+function getStripe() {
+  const key = process.env.STRIPE_SECRET_KEY;
+  if (!key) throw new Error("Missing STRIPE_SECRET_KEY — add to Vercel environment variables");
+  return new Stripe(key, { apiVersion: "2026-03-25.dahlia" });
 }
 
-const stripe = new Stripe(stripeSecretKey, {
-  apiVersion: "2026-03-25.dahlia",
-});
-
-// Maps product_key → env variable name
-// Pattern: STRIPE_DIV296_67 and STRIPE_DIV296_147
-// Set these in Vercel environment variables
 function getPriceId(tier: number): string | undefined {
   if (tier === 67) return process.env.STRIPE_DIV296_67;
   if (tier === 147) return process.env.STRIPE_DIV296_147;
@@ -22,15 +18,12 @@ function getPriceId(tier: number): string | undefined {
 
 export async function POST(req: Request) {
   try {
+    const stripe = getStripe();
     const body = await req.json();
 
     const { decision_session_id, tier, product_key, success_url, cancel_url } = body;
 
-    console.log("Incoming checkout request:", {
-      decision_session_id,
-      tier,
-      product_key,
-    });
+    console.log("Incoming checkout request:", { decision_session_id, tier, product_key });
 
     if (!decision_session_id || !tier) {
       return NextResponse.json(
@@ -54,38 +47,27 @@ export async function POST(req: Request) {
       const envKey = `STRIPE_DIV296_${normalizedTier}`;
       console.error("Missing Stripe price ID for:", envKey);
       return NextResponse.json(
-        { error: `Missing Stripe price configuration for ${envKey}. Add this to your Vercel environment variables.` },
+        { error: `Missing Stripe price configuration for ${envKey}. Add to Vercel environment variables.` },
         { status: 500 }
       );
     }
 
     const productKey = product_key || `supertax_${normalizedTier}_div296_wealth_eraser`;
-
-    // Success URL — always append Stripe's checkout session ID
-    // The success page uses this to verify the purchase
     const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://supertaxcheck.com.au";
     const successPath = normalizedTier === 147 ? "execute" : "prepare";
+
     const resolvedSuccessUrl = success_url
       ? `${success_url}?payment=success&tier=${normalizedTier}&session_id={CHECKOUT_SESSION_ID}`
       : `${baseUrl}/check/div296-wealth-eraser/success/${successPath}?payment=success&tier=${normalizedTier}&session_id={CHECKOUT_SESSION_ID}`;
 
     const resolvedCancelUrl = cancel_url || `${baseUrl}/check/div296-wealth-eraser`;
 
-    console.log("Creating Stripe session:", {
-      priceId,
-      productKey,
-      successPath,
-    });
+    console.log("Creating Stripe session:", { priceId, productKey, successPath });
 
     const session = await stripe.checkout.sessions.create({
       mode: "payment",
       payment_method_types: ["card"],
-      line_items: [
-        {
-          price: priceId,
-          quantity: 1,
-        },
-      ],
+      line_items: [{ price: priceId, quantity: 1 }],
       success_url: resolvedSuccessUrl,
       cancel_url: resolvedCancelUrl,
       metadata: {
@@ -95,7 +77,6 @@ export async function POST(req: Request) {
         country_key: "div296",
         verification_source: "stripe_checkout",
       },
-      // Pre-fill Australian tax settings
       payment_intent_data: {
         metadata: {
           decision_session_id: String(decision_session_id),
