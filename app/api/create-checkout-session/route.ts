@@ -8,7 +8,7 @@ if (!stripeSecretKey) {
 }
 
 const stripe = new Stripe(stripeSecretKey, {
-  apiVersion: "2024-06-20",
+  apiVersion: "2026-03-25.dahlia",
 });
 
 // Maps product_key → env variable name
