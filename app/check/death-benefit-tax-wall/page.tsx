@@ -95,7 +95,7 @@ const faqs = [
   },
   {
     question: "We are not officially married — does that change anything for my partner?",
-    answer: "No — de facto partners are treated exactly the same as married spouses under tax law. This includes same-sex couples and long-term partners who are not legally married. Your de facto partner pays zero tax on your super when you die. This has been the law since 2008. The key is that your partner qualifies as a de facto — meaning you live together and there is a genuine relationship. Your SMSF should have this documented. Source: ITAA 1997, SIS Act.",
+    answer: "No — de facto partners are treated exactly the same as married spouses under tax law. This includes same-sex couples and long-term partners who are not legally married. Your de facto partner pays zero tax on your super when you die. This has been the law since 2008. The key is that your partner qualifies as a de facto — meaning you live together as a genuine couple on a domestic basis. You do not need to be living together every single day — FIFO workers and long-distance couples can still qualify. What matters is the nature of the relationship, not the number of nights under the same roof. Courts look at the full facts: shared finances, mutual support, how you present as a couple. If there is any doubt, your SMSF should have the relationship documented — a statutory declaration helps. Your SMSF accountant or adviser can assist. Source: ITAA 1997 s.302-195, SIS Act s.10, ATO ID 2011/83.",
   },
   {
     question: "What is the taxable part of my super and how much of mine is taxable?",
