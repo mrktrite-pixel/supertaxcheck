@@ -93,7 +93,7 @@ const faqs = [
   },
   {
     question: "What is the new super tax and how much is it?",
-    answer: "From July 1 this year, if your total super balance is over $3 million, the ATO takes an extra cut of the earnings above that. Not on the whole balance — just on the growth above $3 million. The additional rate is 15% on earnings between $3M and $10M — bringing the total to 30%. Above $10M it goes to 40%. On a $4M fund earning 7% a year, that is roughly $4,200 in extra tax annually. On a $6M fund it is closer to $18,900. Source: Division 296, ITAA 1997 (Subdiv 296-B), enacted 10 March 2026.",
+    answer: "From July 1 this year, if your total super balance is over $3 million, the ATO takes an extra cut of the earnings above that. Not on the whole balance — just on the growth above $3 million. The additional rate is 15% on earnings between $3M and $10M — bringing the total to 30%. Above $10M it goes to 40%. On a $3.4M fund earning 7% a year, that is roughly $4,200 in extra tax annually. On a $6M fund it is closer to $31,500. Source: Division 296, ITAA 1997 (Subdiv 296-B), enacted 10 March 2026.",
   },
   {
     question: "Can I choose which assets to include in the reset?",
@@ -368,6 +368,14 @@ export default function Div296WealthEraserPage() {
             </div>
           </section>
 
+
+          {/* ── INLINE CTA — mobile fix ── */}
+          <div className="flex justify-center">
+            <a href="#calculator"
+              className="inline-flex items-center gap-2 rounded-xl border border-neutral-200 bg-white px-6 py-3 text-sm font-semibold text-neutral-800 shadow-sm transition hover:bg-neutral-50">
+              ↓ Run the calculator for your fund — 2 minutes
+            </a>
+          </div>
           {/* ── SECTION 3: WHAT TO ASK YOUR ACCOUNTANT ── */}
           <section>
             <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-6 sm:p-8">
@@ -450,7 +458,7 @@ export default function Div296WealthEraserPage() {
               <div className="grid gap-3 sm:grid-cols-3 mb-4">
                 {[
                   { label: "Gary's share of balance above $3M", value: "33%", sub: "($1.5M above threshold ÷ $4.5M total)" },
-                  { label: "Eventual tax on old growth if no reset", value: "~$79,000", sub: "When the property is eventually sold", red: true },
+                  { label: "Eventual tax on old growth if no reset", value: "~$80,000", sub: "When the property is eventually sold", red: true },
                   { label: "That tax after the reset", value: "$0", sub: "Pre-June 30 growth is permanently protected", green: true },
                 ].map((item) => (
                   <div key={item.label} className={`rounded-xl border px-4 py-3 ${item.red ? "border-red-200 bg-red-50" : item.green ? "border-emerald-200 bg-emerald-50" : "border-neutral-100 bg-neutral-50"}`}>
@@ -462,7 +470,7 @@ export default function Div296WealthEraserPage() {
               </div>
               <div className="rounded-xl border border-blue-100 bg-blue-50 px-4 py-3">
                 <p className="text-sm text-blue-900">
-                  <strong>The reset saves Gary ~$79,000</strong> in future Division 296 tax on the growth that already happened. That is the value of locking in today's $2.4 million value before June 30. Source: Division 296 Act s.42, ATO guidance.
+                  <strong>The reset saves Gary ~$80,000</strong> in future Division 296 tax on the growth that already happened. That is the value of locking in today's $2.4 million value before June 30. Source: Division 296 Act s.42, ATO guidance.
                 </p>
               </div>
             </div>
@@ -537,6 +545,31 @@ export default function Div296WealthEraserPage() {
             </div>
           </section>
 
+
+          {/* ── CROSS-NAVIGATION ── */}
+          <section>
+            <p className="font-mono text-xs uppercase tracking-widest text-neutral-400 mb-4">Also on SuperTaxCheck</p>
+            <div className="grid gap-4 sm:grid-cols-3">
+              <Link href="/check/death-benefit-tax-wall"
+                className="group rounded-xl border border-neutral-200 bg-white p-4 transition hover:border-neutral-400 hover:shadow-sm">
+                <p className="font-mono text-[10px] uppercase tracking-widest text-amber-600 mb-1">Gate 02</p>
+                <p className="text-sm font-semibold text-neutral-900 mb-1 group-hover:text-neutral-700">Death Benefit Tax-Wall</p>
+                <p className="text-xs text-neutral-500">When you die, your adult kids pay 17% tax on most of your super before they see a dollar. Free calculator shows your number.</p>
+              </Link>
+              <Link href="/check/super-to-trust-exit"
+                className="group rounded-xl border border-neutral-200 bg-white p-4 transition hover:border-neutral-400 hover:shadow-sm">
+                <p className="font-mono text-[10px] uppercase tracking-widest text-blue-600 mb-1">Gate 03</p>
+                <p className="text-sm font-semibold text-neutral-900 mb-1 group-hover:text-neutral-700">Super-to-Trust Exit</p>
+                <p className="text-xs text-neutral-500">Everyone is asking whether to move to a trust. The exit usually costs more than the tax you save. Run the 10-year model.</p>
+              </Link>
+              <Link href="/what-is-the-new-super-tax"
+                className="group rounded-xl border border-neutral-800 bg-neutral-950 p-4 transition hover:bg-neutral-900">
+                <p className="font-mono text-[10px] uppercase tracking-widest text-neutral-400 mb-1">Plain English guide</p>
+                <p className="text-sm font-semibold text-white mb-1">All three problems explained</p>
+                <p className="text-xs text-neutral-400">No jargon. No email. Written for you — not your accountant.</p>
+              </Link>
+            </div>
+          </section>
           {/* ── SECTION 9: LAW BAR ── */}
           <section>
             <div className="rounded-2xl border border-blue-100 bg-blue-50 px-6 py-5 space-y-4">

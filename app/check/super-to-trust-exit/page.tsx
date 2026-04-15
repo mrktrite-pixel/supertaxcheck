@@ -408,6 +408,14 @@ export default function SuperToTrustExitPage() {
             </div>
           </section>
 
+
+          {/* ── INLINE CTA — mobile fix ── */}
+          <div className="flex justify-center">
+            <a href="#calculator"
+              className="inline-flex items-center gap-2 rounded-xl border border-neutral-200 bg-white px-6 py-3 text-sm font-semibold text-neutral-800 shadow-sm transition hover:bg-neutral-50">
+              ↓ Run the 10-year model for your fund
+            </a>
+          </div>
           {/* ── SECTION 3: COMPARISON TABLE ── */}
           <section>
             <p className="font-mono text-xs uppercase tracking-widest text-neutral-400 mb-2">Super vs trust — every factor</p>
@@ -557,6 +565,31 @@ export default function SuperToTrustExitPage() {
             </div>
           </section>
 
+
+          {/* ── CROSS-NAVIGATION ── */}
+          <section>
+            <p className="font-mono text-xs uppercase tracking-widest text-neutral-400 mb-4">Also on SuperTaxCheck</p>
+            <div className="grid gap-4 sm:grid-cols-3">
+              <Link href="/check/div296-wealth-eraser"
+                className="group rounded-xl border border-neutral-200 bg-white p-4 transition hover:border-neutral-400 hover:shadow-sm">
+                <p className="font-mono text-[10px] uppercase tracking-widest text-red-600 mb-1">Gate 01 · {days} days left</p>
+                <p className="text-sm font-semibold text-neutral-900 mb-1 group-hover:text-neutral-700">June 30 Cost-Base Reset</p>
+                <p className="text-xs text-neutral-500">One-time chance to lock in today's values before June 30. If you are staying in super — this is the urgent decision.</p>
+              </Link>
+              <Link href="/check/death-benefit-tax-wall"
+                className="group rounded-xl border border-neutral-200 bg-white p-4 transition hover:border-neutral-400 hover:shadow-sm">
+                <p className="font-mono text-[10px] uppercase tracking-widest text-amber-600 mb-1">Gate 02</p>
+                <p className="text-sm font-semibold text-neutral-900 mb-1 group-hover:text-neutral-700">Death Benefit Tax-Wall</p>
+                <p className="text-xs text-neutral-500">When you die, your adult kids pay 17% tax on most of your super before they see a dollar. Free calculator shows your number.</p>
+              </Link>
+              <Link href="/what-is-the-new-super-tax"
+                className="group rounded-xl border border-neutral-800 bg-neutral-950 p-4 transition hover:bg-neutral-900">
+                <p className="font-mono text-[10px] uppercase tracking-widest text-neutral-400 mb-1">Plain English guide</p>
+                <p className="text-sm font-semibold text-white mb-1">All three problems explained</p>
+                <p className="text-xs text-neutral-400">No jargon. No email. Written for you — not your accountant.</p>
+              </Link>
+            </div>
+          </section>
           {/* ── SECTION 9: LAW BAR ── */}
           <section>
             <div className="rounded-2xl border border-blue-100 bg-blue-50 px-6 py-5 space-y-4">
