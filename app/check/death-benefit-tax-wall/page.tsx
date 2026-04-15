@@ -113,13 +113,13 @@ const faqs = [
     question:
       "What is the difference between who can receive my super and who gets it tax-free?",
     answer:
-      "Two completely different laws apply — and this is where most families get hurt. Under the SIS Act (superannuation law): adult children CAN receive a death benefit directly from the fund. Under the ITAA (tax law): adult children are NOT tax dependants and pay 17% tax on the taxable component. Most people assume that because their children can receive the benefit, they receive it tax-free. They cannot. The two definitions are not the same. Source: <a href="https://www.ato.gov.au/tax-and-super-professionals/for-superannuation-professionals/apra-regulated-funds/paying-benefits/paying-superannuation-death-benefits" target="_blank" rel="noopener noreferrer" className="underline text-blue-700 hover:text-blue-900">ATO — Paying Superannuation Death Benefits ↗</a> · SIS Act · ITAA 1997.",
+      "Two completely different laws apply — and this is where most families get hurt. Under the SIS Act (superannuation law): adult children CAN receive a death benefit directly from the fund. Under the ITAA (tax law): adult children are NOT tax dependants and pay 17% tax on the taxable component. Most people assume that because their children can receive the benefit, they receive it tax-free. They cannot. The two definitions are not the same. Source: ATO — Paying Superannuation Death Benefits ↗ · SIS Act · ITAA 1997.",
   },
   {
     question:
       "I have a Binding Death Benefit Nomination to my adult children. Does that protect them from tax?",
     answer:
-      "No. A BDBN controls who receives the benefit — not the tax on it. A BDBN nominating two adult children on a $2M SMSF still results in $272,000 in tax. The BDBN ensures they receive the benefit. It does not reduce the tax. A standard BDBN also expires every 3 years — an expired nomination is treated as if no nomination exists, giving the remaining trustee full discretion. Check whether your SMSF trust deed allows a non-lapsing BDBN. Source: <a href="https://www.ato.gov.au/individuals-and-families/super-for-individuals-and-families/self-managed-super-funds-smsf/paying-smsf-benefits/death-of-an-smsf-member" target="_blank" rel="noopener noreferrer" className="underline text-blue-700 hover:text-blue-900">ATO — Death of an SMSF member ↗</a> · SIS Regulations.",
+      "No. A BDBN controls who receives the benefit — not the tax on it. A BDBN nominating two adult children on a $2M SMSF still results in $272,000 in tax. The BDBN ensures they receive the benefit. It does not reduce the tax. A standard BDBN also expires every 3 years — an expired nomination is treated as if no nomination exists, giving the remaining trustee full discretion. Check whether your SMSF trust deed allows a non-lapsing BDBN. Source: ATO — Death of an SMSF member ↗ · SIS Regulations.",
   },
   {
     question:
