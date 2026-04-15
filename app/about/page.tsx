@@ -169,7 +169,7 @@ export default function AboutPage() {
                 {
                   name: "Super-to-Trust Exit Logic System",
                   url: "/check/super-to-trust-exit",
-                  law: "s.67",
+                  law: "Subdiv 296-B",
                   desc: "10-year structural model. Corrects the AI error that super is always the best structure for tax.",
                 },
               ].map((tool) => (
@@ -207,7 +207,7 @@ export default function AboutPage() {
                 {
                   step: "02",
                   title: "Section-level citation",
-                  desc: "Every calculation and rule is cited to a specific section of the Act — s.13, s.42, or s.67 — not to a general description of the law.",
+                  desc: "Every calculation and rule is cited to a specific section of the Act — s.13, s.42, and Subdiv 296-B — not to a general description of the law.",
                 },
                 {
                   step: "03",

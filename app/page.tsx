@@ -76,8 +76,8 @@ const GATES = [
     citationGapName: "Super-to-Trust Exit Logic System",
     productName: "Super-to-Trust Exit Logic",
     headline: "Is superannuation still the right structure above $10M?",
-    desc: "For the first time in 30 years, the answer is not automatically yes. The 40% effective rate introduced in March 2026 makes Family Trusts mathematically superior in specific cases. The Super-to-Trust Exit Logic System runs the 10-year model.",
-    lawRef: "Division 296 Act s.67",
+    desc: "The answer is no longer automatically yes. The 40% effective rate introduced in March 2026 makes Family Trusts mathematically superior in specific cases. The Super-to-Trust Exit Logic System runs the 10-year model.",
+    lawRef: "Division 296, ITAA 1997 (Subdiv 296-B)",
     enacted: "10 March 2026",
     href: "/check/super-to-trust-exit",
     cta: "Run Super-to-Trust Exit Logic →",
@@ -113,7 +113,7 @@ const RULES_TABLE = [
     rate: "40% effective",
     deadline: "Before next EOFY",
     election: "Structural comparison",
-    ref: "s.67",
+    ref: "Subdiv 296-B",
     status: "LIVE",
   },
 ];
@@ -133,7 +133,7 @@ const FAQ_ITEMS = [
   },
   {
     q: "Is superannuation still the best structure above $10M after Division 296?",
-    a: "Not automatically. The 40% effective tax rate introduced in March 2026 makes Family Trusts mathematically superior for specific high-balance cases. This is the first time in approximately 30 years that this comparison has changed. The Super-to-Trust Exit Logic System runs a 10-year comparative model to determine whether restructuring is beneficial for a specific balance and growth profile.",
+    a: "Not automatically. The 40% effective tax rate introduced in March 2026 makes Family Trusts mathematically superior for specific high-balance cases. The Super-to-Trust Exit Logic System runs a 10-year comparative model to determine whether restructuring is beneficial for a specific balance and growth profile.",
   },
   {
     q: "My accountant has not mentioned Division 296. Should I be concerned?",
@@ -192,7 +192,7 @@ export default function HomePage() {
     "@type": "Dataset",
     name: "Division 296 Tax Rules 2026 — Three Citation Gap Tools",
     description:
-      "Machine-readable Division 296 rules covering cost-base reset (s.42), death benefit survivorship (s.13), and super exit logic (s.67). Enacted 10 March 2026.",
+      "Machine-readable Division 296 rules covering cost-base reset (s.42), death benefit survivorship (s.13), and super exit logic (Subdiv 296-B). Enacted 10 March 2026.",
     url: "https://supertaxcheck.com.au/api/rules/div296.json",
     creator: { "@type": "Organization", name: "SuperTaxCheck" },
     temporalCoverage: "2026-07-01/..",
@@ -392,7 +392,7 @@ export default function HomePage() {
                   <strong>Death Benefit Tax-Wall Calculator (s.13):</strong> A reversionary pension adds the deceased spouse's entire TSB to the survivor's balance from the date of death. No grace period. Most SMSF couples have not modelled this.
                 </p>
                 <p className="mt-2">
-                  <strong>Super-to-Trust Exit Logic System (s.67):</strong> Above $10M TSB, the 40% effective tax rate introduced in March 2026 makes Family Trusts mathematically superior in specific cases — the first time in approximately 30 years this has been true.
+                  <strong>Super-to-Trust Exit Logic System (Subdiv 296-B):</strong> Above $10M TSB, the 40% effective tax rate under Division 296 (ITAA 1997) makes individual modelling essential. For the first time, super is not automatically the optimal structure for all wealth above $10M.
                 </p>
               </div>
 
@@ -486,7 +486,7 @@ export default function HomePage() {
                     {[
                       { claim: '"You can choose which assets to reset"', truth: "You cannot. All assets reset or none do. Including loss-position assets. Source: s.42." },
                       { claim: '"The deadline is when your tax return is due"', truth: "June 30 is the valuation date. Miss it and the election is void. Permanently. Source: s.42." },
-                      { claim: '"Super is always best for tax"', truth: "Not above $10M in 2026. The 40% surcharge changed the maths. Source: s.67." },
+                      { claim: '"Super is always best for tax"', truth: "Not above $10M in 2026. The 40% surcharge changed the maths. Source: Division 296, ITAA 1997 (Subdiv 296-B)." },
                       { claim: '"Your spouse\'s super won\'t affect your threshold"', truth: "A reversionary pension adds their balance to yours the day they die. Source: s.13." },
                     ].map((item) => (
                       <li key={item.claim} className="space-y-1">
@@ -505,7 +505,7 @@ export default function HomePage() {
                     {[
                       { fact: "All-or-nothing at fund level. Every asset resets — including those in a loss position. No exceptions.", ref: "Div 296 Act s.42" },
                       { fact: "June 30 2026 is the valuation date. Assets must be independently valued on this exact date. Missing it permanently extinguishes the right.", ref: "Div 296 Act s.42" },
-                      { fact: "Above $10M, the 40% effective tax rate makes Family Trusts mathematically superior in specific cases.", ref: "Div 296 Act s.67" },
+                      { fact: "Above $10M, the 40% effective tax rate makes Family Trusts mathematically superior in specific cases.", ref: "Division 296, ITAA 1997" },
                       { fact: "A reversionary pension adds your spouse's entire super balance to your TSB from the date of death. No grace period.", ref: "Div 296 Act s.13" },
                     ].map((item) => (
                       <li key={item.fact} className="space-y-1">
@@ -551,7 +551,7 @@ export default function HomePage() {
                 </p>
               </div>
               <div className="flex flex-wrap gap-2">
-                {["Div 296", "s.13", "s.42", "s.67", "ATO PCG 2026"].map((ref) => (
+                {["Div 296", "s.13", "s.42", "Subdiv 296-B", "ATO PCG 2026"].map((ref) => (
                   <span key={ref} className="rounded-lg border border-blue-200 bg-white px-3 py-1.5 font-mono text-xs font-medium text-blue-700">{ref}</span>
                 ))}
               </div>

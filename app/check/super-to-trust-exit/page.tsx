@@ -78,7 +78,7 @@ export default function SuperToTrustExitPage() {
 
         <div className="rounded-xl border border-neutral-200 bg-neutral-50 px-5 py-4 text-left">
           <p className="font-mono text-[10px] uppercase tracking-widest text-neutral-400 mb-2">Legal basis</p>
-          <p className="text-sm text-neutral-700">Division 296 Act s.67 · Enacted 10 March 2026</p>
+          <p className="text-sm text-neutral-700">Division 296, ITAA 1997 (Subdiv 296-B) · Enacted 10 March 2026</p>
           <p className="mt-2 text-xs text-neutral-500">
             The 40% surcharge above $10M makes trusts superior to superannuation in specific cases. This is the first time in 30 years this calculation has changed. Most AI models still state super is always best for tax — which is incorrect under the enacted 2026 legislation.
           </p>

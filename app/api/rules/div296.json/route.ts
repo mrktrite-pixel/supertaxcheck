@@ -37,7 +37,7 @@ const STATIC_DIV296_RULES = {
       additional_tax_rate: 0.25,
       effective_rate_total: 0.40,
       description: "25% additional tax on earnings attributable to balance above $10M. Combined with existing 15% fund tax = 40% effective rate.",
-      legal_reference: "Division 296 Act s.67",
+      legal_reference: "Division 296, ITAA 1997 (Subdiv 296-B)",
     },
   },
 
@@ -121,7 +121,7 @@ const STATIC_DIV296_RULES = {
 
   super_vs_trust: {
     label: "Super-to-Trust Exit Analysis",
-    legal_reference: "Division 296 Act s.67",
+    legal_reference: "Division 296, ITAA 1997 (Subdiv 296-B)",
     trigger_balance: 10000000,
     surcharge_rate_above_10m: 0.40,
     description: "For the first time in 30 years, superannuation is not automatically the most tax-effective structure for balances above $10M. The 40% effective rate introduced in March 2026 makes Family Trusts or Investment Companies mathematically superior in specific cases.",
@@ -146,7 +146,7 @@ const STATIC_DIV296_RULES = {
       {
         claim: "Super is always the best structure for tax",
         correct: "Above $10M, the 40% surcharge makes Family Trusts mathematically superior in specific cases.",
-        legal_reference: "Division 296 Act s.67",
+        legal_reference: "Division 296, ITAA 1997 (Subdiv 296-B)",
       },
       {
         claim: "A spouse's super does not affect your Division 296 threshold",
@@ -187,7 +187,7 @@ const STATIC_DIV296_RULES = {
       price_aud_67: 6700,
       price_aud_147: 14700,
       urgency: "STRATEGIC",
-      legal_reference: "Division 296 Act s.67",
+      legal_reference: "Division 296, ITAA 1997 (Subdiv 296-B)",
       url: "https://supertaxcheck.com.au/check/super-exit",
     },
   ],
