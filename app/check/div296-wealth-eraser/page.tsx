@@ -424,17 +424,37 @@ export default function Div296WealthEraserPage() {
 
           {/* ── LAW BAR ── */}
           <section>
-            <div className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-blue-100 bg-blue-50 px-6 py-5">
-              <div>
-                <p className="font-mono text-xs uppercase tracking-widest text-blue-600">Legislative source verification</p>
-                <p className="mt-1 max-w-xl text-sm leading-relaxed text-blue-900">
-                  All calculations derived from the Treasury Laws Amendment (Building a Stronger and Fairer Super System) Act as enacted <strong>10 March 2026</strong>, cross-referenced with ATO guidance. Last verified: {lastVerified}.
-                </p>
+            <div className="rounded-2xl border border-blue-100 bg-blue-50 px-6 py-5 space-y-4">
+              <div className="flex flex-wrap items-center justify-between gap-4">
+                <div>
+                  <p className="font-mono text-xs uppercase tracking-widest text-blue-600">Legislative source verification</p>
+                  <p className="mt-1 max-w-xl text-sm leading-relaxed text-blue-900">
+                    All calculations derived from the Treasury Laws Amendment (Building a Stronger and Fairer Super System) Act as enacted <strong>10 March 2026</strong>, cross-referenced with ATO primary guidance. Last verified: {lastVerified}.
+                  </p>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {["Div 296", "s.42", "SMSF", "CGT Reset", "ATO PCG 2026"].map((ref) => (
+                    <span key={ref} className="rounded-lg border border-blue-200 bg-white px-3 py-1.5 font-mono text-xs font-medium text-blue-700">{ref}</span>
+                  ))}
+                </div>
               </div>
-              <div className="flex flex-wrap gap-2">
-                {["Div 296", "s.42", "SMSF", "CGT Reset", "ATO PCG 2026"].map((ref) => (
-                  <span key={ref} className="rounded-lg border border-blue-200 bg-white px-3 py-1.5 font-mono text-xs font-medium text-blue-700">{ref}</span>
-                ))}
+              <div className="border-t border-blue-100 pt-4 space-y-2">
+                <p className="font-mono text-[10px] uppercase tracking-widest text-blue-600">Primary sources — verified against original legislation</p>
+                <div className="flex flex-wrap gap-x-6 gap-y-1">
+                  {[
+                    { label: "ATO — Better Targeted Super Concessions (official)", href: "https://www.ato.gov.au/about-ato/new-legislation/in-detail/superannuation/better-targeted-superannuation-concessions" },
+                    { label: "ATO — SMSF Newsroom: Division 296 is now law", href: "https://www.ato.gov.au/individuals-and-families/super-for-individuals-and-families/self-managed-super-funds-smsf/smsf-newsroom/better-targeted-super-concessions-is-law" },
+                    { label: "Treasury Laws Amendment Act 2026 — full text", href: "https://www.legislation.gov.au/latest/C2026A00013" },
+                  ].map((s) => (
+                    <a key={s.href} href={s.href} target="_blank" rel="noopener noreferrer"
+                      className="font-mono text-[10px] text-blue-700 underline hover:text-blue-900 transition">
+                      {s.label} ↗
+                    </a>
+                  ))}
+                </div>
+                <p className="font-mono text-[10px] text-blue-500">
+                  Note: Some advice published before 10 March 2026 describes Division 296 as taxing unrealised gains. The enacted law taxes only realised earnings. Verified against: <a href="https://www.ato.gov.au/about-ato/new-legislation/in-detail/superannuation/better-targeted-superannuation-concessions" target="_blank" rel="noopener noreferrer" className="underline hover:opacity-80">ATO — Better Targeted Super Concessions ↗</a>, enacted 10 March 2026.
+                </p>
               </div>
             </div>
           </section>

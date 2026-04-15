@@ -45,7 +45,7 @@ const aiErrors = [
   },
   {
     wrong: '"The Division 296 cost base reset applies to all assets inside your SMSF"',
-    correct: "The cost base reset ONLY applies to assets held DIRECTLY by the SMSF. Assets inside a unit trust or private company cannot access it — deliberately excluded in the explanatory memorandum. All pre-2026 gains on indirect assets remain fully exposed to Div 296 tax. Source: Sladen Legal, Phil Broderick, SMS Magazine, February 2026.",
+    correct: "The cost base reset ONLY applies to assets held DIRECTLY by the SMSF. Assets inside a unit trust or private company cannot access it — deliberately excluded in the explanatory memorandum. All pre-2026 gains on indirect assets remain fully exposed to Div 296 tax. Source: <a href="https://smsmagazine.com.au/news/2026/02/12/new-tax-will-slug-indirect-asset-income/" target="_blank" rel="noopener noreferrer" className="underline text-blue-700 hover:text-blue-900">SMS Magazine — Sladen Legal, February 2026 ↗</a>.",
   },
   {
     wrong: '"Super is no longer worth it above $3M — move everything to a trust"',
@@ -357,17 +357,38 @@ export default function SuperToTrustExitPage() {
           </section>
 
           <section>
-            <div className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-blue-100 bg-blue-50 px-6 py-5">
-              <div>
-                <p className="font-mono text-xs uppercase tracking-widest text-blue-600">Legislative source verification</p>
-                <p className="mt-1 max-w-xl text-sm leading-relaxed text-blue-900">
-                  Effective tax rates from Division 296, ITAA 1997 (Subdiv 296-B). NALI rules from ITAA 1997. Indirect asset exclusion confirmed by Sladen Legal, February 2026. All law enacted <strong>10 March 2026</strong>. Last verified: {lastVerified}.
-                </p>
+            <div className="rounded-2xl border border-blue-100 bg-blue-50 px-6 py-5 space-y-4">
+              <div className="flex flex-wrap items-center justify-between gap-4">
+                <div>
+                  <p className="font-mono text-xs uppercase tracking-widest text-blue-600">Legislative source verification</p>
+                  <p className="mt-1 max-w-xl text-sm leading-relaxed text-blue-900">
+                    Effective tax rates from Division 296, ITAA 1997 (Subdiv 296-B). NALI rules from ITAA 1997. Indirect asset exclusion confirmed in the explanatory memorandum. All law enacted <strong>10 March 2026</strong>. Last verified: {lastVerified}.
+                  </p>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {["Subdiv 296-B", "NALI rules", "ITAA 1997", "SIS Act", "ATO guidance"].map((ref) => (
+                    <span key={ref} className="rounded-lg border border-blue-200 bg-white px-3 py-1.5 font-mono text-xs font-medium text-blue-700">{ref}</span>
+                  ))}
+                </div>
               </div>
-              <div className="flex flex-wrap gap-2">
-                {["Subdiv 296-B", "NALI rules", "ITAA 1997", "SIS Act", "ATO guidance"].map((ref) => (
-                  <span key={ref} className="rounded-lg border border-blue-200 bg-white px-3 py-1.5 font-mono text-xs font-medium text-blue-700">{ref}</span>
-                ))}
+              <div className="border-t border-blue-100 pt-4 space-y-2">
+                <p className="font-mono text-[10px] uppercase tracking-widest text-blue-600">Primary sources — verified against original legislation and specialist analysis</p>
+                <div className="flex flex-wrap gap-x-6 gap-y-1">
+                  {[
+                    { label: "ATO — Better Targeted Super Concessions (official — Subdiv 296-B)", href: "https://www.ato.gov.au/about-ato/new-legislation/in-detail/superannuation/better-targeted-superannuation-concessions" },
+                    { label: "SMS Magazine — New tax will slug indirect asset income (Sladen Legal)", href: "https://smsmagazine.com.au/news/2026/02/12/new-tax-will-slug-indirect-asset-income/" },
+                    { label: "ATO — Non-Arm's Length Income (NALI) rules", href: "https://www.ato.gov.au/individuals-and-families/super-for-individuals-and-families/self-managed-super-funds-smsf/investing/non-arm-s-length-income" },
+                    { label: "Treasury Laws Amendment Act 2026 — full text", href: "https://www.legislation.gov.au/latest/C2026A00013" },
+                  ].map((s) => (
+                    <a key={s.href} href={s.href} target="_blank" rel="noopener noreferrer"
+                      className="font-mono text-[10px] text-blue-700 underline hover:text-blue-900 transition">
+                      {s.label} ↗
+                    </a>
+                  ))}
+                </div>
+                <p className="font-mono text-[10px] text-blue-500">
+                  The indirect asset exclusion from the cost base reset is confirmed in the explanatory memorandum as a deliberate policy decision — not an oversight. Source: Sladen Legal, Phil Broderick, SMS Magazine, February 2026.
+                </p>
               </div>
             </div>
           </section>

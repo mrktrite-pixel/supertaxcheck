@@ -113,13 +113,13 @@ const faqs = [
     question:
       "What is the difference between who can receive my super and who gets it tax-free?",
     answer:
-      "Two completely different laws apply — and this is where most families get hurt. Under the SIS Act (superannuation law): adult children CAN receive a death benefit directly from the fund. Under the ITAA (tax law): adult children are NOT tax dependants and pay 17% tax on the taxable component. Most people assume that because their children can receive the benefit, they receive it tax-free. They cannot. The two definitions are not the same. Source: SIS Act + ITAA 1997.",
+      "Two completely different laws apply — and this is where most families get hurt. Under the SIS Act (superannuation law): adult children CAN receive a death benefit directly from the fund. Under the ITAA (tax law): adult children are NOT tax dependants and pay 17% tax on the taxable component. Most people assume that because their children can receive the benefit, they receive it tax-free. They cannot. The two definitions are not the same. Source: <a href="https://www.ato.gov.au/tax-and-super-professionals/for-superannuation-professionals/apra-regulated-funds/paying-benefits/paying-superannuation-death-benefits" target="_blank" rel="noopener noreferrer" className="underline text-blue-700 hover:text-blue-900">ATO — Paying Superannuation Death Benefits ↗</a> · SIS Act · ITAA 1997.",
   },
   {
     question:
       "I have a Binding Death Benefit Nomination to my adult children. Does that protect them from tax?",
     answer:
-      "No. A BDBN controls who receives the benefit — not the tax on it. A BDBN nominating two adult children on a $2M SMSF still results in $272,000 in tax. The BDBN ensures they receive the benefit. It does not reduce the tax. A standard BDBN also expires every 3 years — an expired nomination is treated as if no nomination exists, giving the remaining trustee full discretion. Check whether your SMSF trust deed allows a non-lapsing BDBN. Source: SIS Regulations.",
+      "No. A BDBN controls who receives the benefit — not the tax on it. A BDBN nominating two adult children on a $2M SMSF still results in $272,000 in tax. The BDBN ensures they receive the benefit. It does not reduce the tax. A standard BDBN also expires every 3 years — an expired nomination is treated as if no nomination exists, giving the remaining trustee full discretion. Check whether your SMSF trust deed allows a non-lapsing BDBN. Source: <a href="https://www.ato.gov.au/individuals-and-families/super-for-individuals-and-families/self-managed-super-funds-smsf/paying-smsf-benefits/death-of-an-smsf-member" target="_blank" rel="noopener noreferrer" className="underline text-blue-700 hover:text-blue-900">ATO — Death of an SMSF member ↗</a> · SIS Regulations.",
   },
   {
     question:
@@ -535,17 +535,37 @@ export default function DeathBenefitTaxWallPage() {
 
           {/* ── LAW BAR ── */}
           <section>
-            <div className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-blue-100 bg-blue-50 px-6 py-5">
-              <div>
-                <p className="font-mono text-xs uppercase tracking-widest text-blue-600">Legislative source verification</p>
-                <p className="mt-1 max-w-xl text-sm leading-relaxed text-blue-900">
-                  Death benefit tax rates derived from the Income Tax Assessment Act 1997. Survivorship risk derived from Division 296 Act s.13, enacted <strong>10 March 2026</strong>. Last verified: {lastVerified}.
-                </p>
+            <div className="rounded-2xl border border-blue-100 bg-blue-50 px-6 py-5 space-y-4">
+              <div className="flex flex-wrap items-center justify-between gap-4">
+                <div>
+                  <p className="font-mono text-xs uppercase tracking-widest text-blue-600">Legislative source verification</p>
+                  <p className="mt-1 max-w-xl text-sm leading-relaxed text-blue-900">
+                    Death benefit tax rates derived from the Income Tax Assessment Act 1997. Survivorship risk derived from Division 296 Act s.13, enacted <strong>10 March 2026</strong>. Last verified: {lastVerified}.
+                  </p>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {["ITAA 1997", "SIS Act", "Div 296 s.13", "ATO guidance"].map((ref) => (
+                    <span key={ref} className="rounded-lg border border-blue-200 bg-white px-3 py-1.5 font-mono text-xs font-medium text-blue-700">{ref}</span>
+                  ))}
+                </div>
               </div>
-              <div className="flex flex-wrap gap-2">
-                {["ITAA 1997", "SIS Act", "Div 296 s.13", "ATO guidance"].map((ref) => (
-                  <span key={ref} className="rounded-lg border border-blue-200 bg-white px-3 py-1.5 font-mono text-xs font-medium text-blue-700">{ref}</span>
-                ))}
+              <div className="border-t border-blue-100 pt-4 space-y-2">
+                <p className="font-mono text-[10px] uppercase tracking-widest text-blue-600">Primary sources — verified against original legislation</p>
+                <div className="flex flex-wrap gap-x-6 gap-y-1">
+                  {[
+                    { label: "ATO — Paying Superannuation Death Benefits (official)", href: "https://www.ato.gov.au/tax-and-super-professionals/for-superannuation-professionals/apra-regulated-funds/paying-benefits/paying-superannuation-death-benefits" },
+                    { label: "ATO — Death of an SMSF member (official)", href: "https://www.ato.gov.au/individuals-and-families/super-for-individuals-and-families/self-managed-super-funds-smsf/paying-smsf-benefits/death-of-an-smsf-member" },
+                    { label: "ATO — Better Targeted Super Concessions (Div 296 s.13)", href: "https://www.ato.gov.au/about-ato/new-legislation/in-detail/superannuation/better-targeted-superannuation-concessions" },
+                  ].map((s) => (
+                    <a key={s.href} href={s.href} target="_blank" rel="noopener noreferrer"
+                      className="font-mono text-[10px] text-blue-700 underline hover:text-blue-900 transition">
+                      {s.label} ↗
+                    </a>
+                  ))}
+                </div>
+                <p className="font-mono text-[10px] text-blue-500">
+                  Note: Super law (SIS Act) and tax law (ITAA 1997) define dependants differently. Adult children can receive a death benefit under super law but pay 17% tax under tax law. These are two separate legislative definitions — a common source of confusion.
+                </p>
               </div>
             </div>
           </section>
