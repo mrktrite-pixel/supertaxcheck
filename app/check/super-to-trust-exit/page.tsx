@@ -45,7 +45,7 @@ const aiErrors = [
   },
   {
     wrong: '"The Division 296 cost base reset applies to all assets inside your SMSF"',
-    correct: "The cost base reset ONLY applies to assets held DIRECTLY by the SMSF. Assets inside a unit trust or private company cannot access it — deliberately excluded in the explanatory memorandum. All pre-2026 gains on indirect assets remain fully exposed to Div 296 tax. Source: <a href="https://smsmagazine.com.au/news/2026/02/12/new-tax-will-slug-indirect-asset-income/" target="_blank" rel="noopener noreferrer" className="underline text-blue-700 hover:text-blue-900">SMS Magazine — Sladen Legal, February 2026 ↗</a>.",
+    correct: "The cost base reset ONLY applies to assets held DIRECTLY by the SMSF. Assets inside a unit trust or private company cannot access it — deliberately excluded in the explanatory memorandum. All pre-2026 gains on indirect assets remain fully exposed to Div 296 tax. Source: SMS Magazine — Sladen Legal, February 2026 ↗.",
   },
   {
     wrong: '"Super is no longer worth it above $3M — move everything to a trust"',

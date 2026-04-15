@@ -453,7 +453,7 @@ export default function Div296WealthEraserPage() {
                   ))}
                 </div>
                 <p className="font-mono text-[10px] text-blue-500">
-                  Note: Some advice published before 10 March 2026 describes Division 296 as taxing unrealised gains. The enacted law taxes only realised earnings. Verified against: <a href="https://www.ato.gov.au/about-ato/new-legislation/in-detail/superannuation/better-targeted-superannuation-concessions" target="_blank" rel="noopener noreferrer" className="underline hover:opacity-80">ATO — Better Targeted Super Concessions ↗</a>, enacted 10 March 2026.
+                  Note: Some advice published before 10 March 2026 describes Division 296 as taxing unrealised gains. The enacted law taxes only realised earnings. Verified against: ATO — Better Targeted Super Concessions ↗, enacted 10 March 2026.
                 </p>
               </div>
             </div>
