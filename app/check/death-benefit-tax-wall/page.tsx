@@ -5,16 +5,15 @@ import DeathBenefitTaxWallCalculator from "./DeathBenefitTaxWallCalculator";
 import { getCountdownData } from "@/lib/countdown";
 
 export const metadata: Metadata = {
-  title: "Death Benefit Tax-Wall Calculator | SuperTaxCheck",
+  title: "Super Death Benefit Tax Calculator — What Your Kids Actually Inherit | SuperTaxCheck",
   description:
-    "Adult children pay 17% tax on the taxable component of your SMSF when you die. On a $2M SMSF with 80% taxable component that is $272,000 going to the ATO — not your family. Free calculator. Built on ITAA 1997 and Division 296 Act s.13.",
+    "When you die, your adult kids do not just inherit your super. They inherit a tax bill. On most funds, around 80% of the balance gets taxed at 17% before your kids see a dollar. On a $2M fund that is $272,000 to the ATO. Free calculator shows your number.",
   alternates: {
     canonical: "https://supertaxcheck.com.au/check/death-benefit-tax-wall",
   },
   openGraph: {
-    title: "Death Benefit Tax-Wall Calculator | SuperTaxCheck",
-    description:
-      "Your children will pay up to $272,000 tax on your SMSF when you die. Most trustees don't know this. Free calculator shows your exact tax wall.",
+    title: "Super Death Benefit Tax — What Your Kids Actually Inherit",
+    description: "On a $2M super fund, your adult kids pay $272,000 tax before they see a dollar. Most people do not know this. Free calculator. 2 minutes.",
     url: "https://supertaxcheck.com.au/check/death-benefit-tax-wall",
     siteName: "SuperTaxCheck",
     type: "website",
@@ -23,160 +22,143 @@ export const metadata: Metadata = {
 
 const lastVerified = "April 2026";
 
-// ── GEO DATA ───────────────────────────────────────────────────────────────
+// ── DATA ───────────────────────────────────────────────────────────────────
+
 const taxRatesTable = [
+  { recipient: "Your spouse or partner", rate: "0%", colour: "emerald", notes: "Married or de facto — same rule. Tax-free regardless." },
+  { recipient: "Your kids under 18", rate: "0%", colour: "emerald", notes: "Tax-free while under 18." },
+  { recipient: "Your adult kids (18+)", rate: "17%", colour: "red", notes: "17% on the taxable part. This is where the tax wall is." },
+  { recipient: "Adult kids via your estate", rate: "15%", colour: "amber", notes: "Routing through your Will saves the 2% Medicare levy." },
+  { recipient: "Adult kids (insurance payout)", rate: "32%", colour: "red", notes: "If the fund claimed a tax deduction on the insurance premium and you were under 65." },
+];
+
+const accountantQuestions = [
   {
-    recipient: "Spouse / de facto partner",
-    taxStatus: "Tax dependant",
-    taxablePct: "0%",
-    taxFreePct: "0%",
-    notes: "Fully tax-free regardless of component split",
+    q: "What is the taxable component of my super right now — in actual dollars, not a percentage?",
+    why: "Most people have 70-90% taxable component built up from employer contributions over their working life. On a $2M fund at 80% taxable, that is $1.6M exposed to the 17% tax. You need the dollar figure to understand what your kids are actually facing.",
   },
   {
-    recipient: "Child under 18",
-    taxStatus: "Tax dependant",
-    taxablePct: "0%",
-    taxFreePct: "0%",
-    notes: "Tax-free. Pension must cease at age 25 unless disability.",
+    q: "Have we done a recontribution strategy to reduce the taxable part?",
+    why: "If you are over 60, you can withdraw super tax-free and recontribute it as after-tax money — converting taxable to tax-free. This directly reduces what the ATO takes from your kids. Many people who could do this have never been told about it.",
   },
   {
-    recipient: "Adult child (18+, financially independent)",
-    taxStatus: "NOT a tax dependant",
-    taxablePct: "17% (15% + 2% Medicare)",
-    taxFreePct: "0%",
-    notes: "Most common situation. 70-90% of SMSF is typically taxable.",
+    q: "Is my Binding Death Benefit Nomination still valid — and does it expire?",
+    why: "A standard nomination expires every 3 years. An expired nomination means the trustee decides who gets your super — which may not be your kids. And even a valid nomination does not reduce the 17% tax. Two separate problems.",
   },
   {
-    recipient: "Adult child via estate (not direct)",
-    taxStatus: "NOT a tax dependant",
-    taxablePct: "15% (no Medicare levy)",
-    taxFreePct: "0%",
-    notes: "Routing via estate saves 2% Medicare levy.",
+    q: "Does my super go through my Will when I die, or directly from the fund?",
+    why: "Super is not automatically covered by your Will. If it goes directly from the fund to your adult kids, they pay 17%. If it goes through your estate first, they pay 15% — saving 2% on the taxable amount. On $1.6M taxable, that is $32,000 difference.",
   },
   {
-    recipient: "Adult child — untaxed element (insurance)",
-    taxStatus: "NOT a tax dependant",
-    taxablePct: "32% (30% + 2% Medicare)",
-    taxFreePct: "0%",
-    notes: "Applies where fund claimed tax deduction on insurance premium. Member under 65 at death.",
+    q: "If my partner and I both have super and one of us dies — what happens to the survivor's tax situation?",
+    why: "This is the Div 296 survivorship risk. If your partner's super rolls to you automatically when they die, your total balance jumps — potentially over the $3 million threshold. The new tax then applies. Most couples have not modelled this.",
   },
 ];
 
-const workedExample = {
-  balance: "$2,000,000",
-  taxableComponent: "$1,600,000",
-  taxFreeComponent: "$400,000",
-  numChildren: 2,
-  totalTax: "$272,000",
-  perChild: "$136,000",
-  familyKeeps: "$1,728,000",
-  atoTakes: "$272,000",
-  recontributionSaving: "$51,000",
-  recontributionAmount: "$300,000",
-};
-
-const aiErrors = [
+const deadlineItems = [
   {
-    wrong: '"Your super passes to your children tax-free"',
-    correct:
-      "Only to tax dependants. Adult children over 18 who are financially independent pay 17% (15% + 2% Medicare) on the taxable component. On a $2M SMSF with 80% taxable component: $272,000 to the ATO.",
-    ref: "ITAA 1997, ATO death benefit guidance",
+    when: "Right now",
+    what: "Check your taxable component — ask your accountant",
+    consequence: "You cannot plan what you cannot measure. Get the dollar figure. Not a percentage. The actual dollar amount your kids will pay tax on.",
+    urgent: true,
   },
   {
-    wrong: '"A Binding Death Benefit Nomination protects your children from tax"',
-    correct:
-      "A BDBN controls who receives the benefit — not the tax on it. Adult children still pay 17% on the taxable component regardless of a valid BDBN. A BDBN also expires every 3 years unless your deed allows non-lapsing nominations.",
-    ref: "SIS Regulations, ITAA 1997",
+    when: "Before you turn 75",
+    what: "Last chance for the recontribution strategy",
+    consequence: "You must be under 75 to make non-concessional contributions. If you are 68-74, the work test may apply. The window closes permanently at 75.",
+    urgent: true,
   },
   {
-    wrong: '"Super law and tax law define dependants the same way"',
-    correct:
-      "Two completely different definitions. Under the SIS Act (super law), adult children CAN receive a death benefit directly. Under the ITAA (tax law), adult children are NOT tax dependants and pay 17% tax on the taxable component. Conflating these two definitions is the most expensive mistake in SMSF estate planning.",
-    ref: "SIS Act + ITAA 1997",
+    when: "Before June 30 2026",
+    what: "Div 296 survivorship risk — if your combined super exceeds $3M",
+    consequence: "If your partner's super would push your balance over $3 million when they die, the new Division 296 tax applies. The cost-base reset on Gate 01 can help — but only before June 30.",
+    urgent: true,
   },
   {
-    wrong: '"Your Will covers your superannuation"',
-    correct:
-      "Superannuation is NOT an estate asset. It is not covered by your Will unless you nominate your Legal Personal Representative (executor) as the beneficiary — which then allows your Will to direct the proceeds. Without a valid BDBN or LPR nomination, the remaining SMSF trustee has full discretion.",
-    ref: "SIS Act, ATO SMSF guidance",
+    when: "Every 3 years",
+    what: "Renew your Binding Death Benefit Nomination",
+    consequence: "A standard BDBN expires every 3 years. Check when yours was last signed. An expired nomination gives the trustee full discretion over your super.",
+    urgent: false,
+  },
+  {
+    when: "When your circumstances change",
+    what: "Update your nomination after divorce, remarriage, or a child turns 18",
+    consequence: "Many people have nominations that no longer reflect their wishes. A nomination to a former spouse can still be valid. Review it now.",
+    urgent: false,
   },
 ];
 
 const faqs = [
   {
-    question:
-      "I thought superannuation passed to my children tax-free when I die. Is that right?",
-    answer:
-      "Only if your children are tax dependants under tax law. An adult child over 18 who is financially independent is NOT a tax dependant — regardless of your relationship or how much you love them. They pay 17% tax (15% plus 2% Medicare levy) on the taxable component of your SMSF (Self-Managed Super Fund). On a $2M SMSF with 80% taxable component, that is $272,000 going to the ATO — not your children. This is the most widespread misconception in Australian SMSF estate planning. Source: ITAA 1997.",
+    question: "My super goes to my kids when I die — does that mean they get it tax-free?",
+    answer: "No — and this is the most common thing people get wrong about super. Your adult kids (over 18, financially independent) are not tax dependants under tax law. They pay 17% tax — 15% plus 2% Medicare levy — on the taxable part of your super. On a $2M fund where 80% is taxable, that is $272,000 going to the ATO before your kids see a dollar. Your spouse or partner pays nothing. Your kids under 18 pay nothing. But your adult kids pay 17%. Source: ITAA 1997.",
   },
   {
-    question:
-      "What is the difference between who can receive my super and who gets it tax-free?",
-    answer:
-      "Two completely different laws apply — and this is where most families get hurt. Under the SIS Act (superannuation law): adult children CAN receive a death benefit directly from the fund. Under the ITAA (tax law): adult children are NOT tax dependants and pay 17% tax on the taxable component. Most people assume that because their children can receive the benefit, they receive it tax-free. They cannot. The two definitions are not the same. Source: ATO — Paying Superannuation Death Benefits ↗ · SIS Act · ITAA 1997.",
+    question: "We are not officially married — does that change anything for my partner?",
+    answer: "No — de facto partners are treated exactly the same as married spouses under tax law. This includes same-sex couples and long-term partners who are not legally married. Your de facto partner pays zero tax on your super when you die. This has been the law since 2008. The key is that your partner qualifies as a de facto — meaning you live together and there is a genuine relationship. Your SMSF should have this documented. Source: ITAA 1997, SIS Act.",
   },
   {
-    question:
-      "I have a Binding Death Benefit Nomination to my adult children. Does that protect them from tax?",
-    answer:
-      "No. A BDBN controls who receives the benefit — not the tax on it. A BDBN nominating two adult children on a $2M SMSF still results in $272,000 in tax. The BDBN ensures they receive the benefit. It does not reduce the tax. A standard BDBN also expires every 3 years — an expired nomination is treated as if no nomination exists, giving the remaining trustee full discretion. Check whether your SMSF trust deed allows a non-lapsing BDBN. Source: ATO — Death of an SMSF member ↗ · SIS Regulations.",
+    question: "What is the taxable part of my super and how much of mine is taxable?",
+    answer: "Your super has two parts — taxable and tax-free. The taxable part is built up from employer contributions, salary sacrifice, and earnings in accumulation phase. The tax-free part comes only from personal after-tax contributions you made yourself. Most people who worked for 30+ years and had compulsory super going in have 70-90% taxable. On a $2M fund at 80% taxable — that is $1.6M exposed to the 17% tax when you die. To find your exact split, ask your accountant for your member statement showing the component breakdown. Source: ITAA 1997 proportioning rule.",
   },
   {
-    question:
-      "What percentage of my SMSF is the taxable component?",
-    answer:
-      "The taxable component is built from employer contributions (SG), salary sacrifice, and investment earnings in accumulation phase. The tax-free component comes only from personal after-tax (non-concessional) contributions. Most SMSF members who have been employed for 30+ years have 70-90% taxable component. On a $2M SMSF at 80% taxable: $1.6M is exposed to the 17% death benefit tax wall for adult children. To find yours: ask your SMSF accountant for your member statement showing the component split. Source: ITAA 1997 proportioning rule.",
+    question: "What is the recontribution strategy and is it too late for me to do it?",
+    answer: "The recontribution strategy is the main way to reduce this tax. It works like this: if you are over 60, you can withdraw super tax-free, then put it back in as an after-tax contribution. That money is now in the tax-free component. When you die, your kids pay no tax on the tax-free part. Example: withdraw $300,000, recontribute as non-concessional. Tax saving for your kids: $51,000 (17% of $300,000). To be eligible you need to be over 60, under 75, and have a total balance under $1.9M to make full contributions. The window closes permanently when you can no longer contribute. Source: ATO recontribution guidance.",
   },
   {
-    question:
-      "What is the recontribution strategy and can I still do it?",
-    answer:
-      "The recontribution strategy involves withdrawing super (tax-free over 60) and recontributing it as a non-concessional (after-tax) contribution. This converts taxable component to tax-free component — directly reducing the death benefit tax for adult children. Example: withdraw $300,000 tax-free, recontribute as non-concessional. Result: $300,000 converts from taxable to tax-free. Tax saving for adult children: $51,000 (17% of $300,000). Eligibility requires: over 60 (so withdrawals are tax-free), still eligible to contribute (under 75, work test if 67-74), and TSB allows non-concessional contributions ($1.9M cap). Source: ATO recontribution guidance.",
+    question: "I have a Binding Death Benefit Nomination. Does that protect my kids from tax?",
+    answer: "No — a BDBN controls who gets your super, not the tax on it. A valid BDBN naming your two adult kids on a $2M fund means they definitely receive the benefit. But they still pay $272,000 in tax on it. The BDBN is important for control. It is not a tax strategy. It also expires every 3 years unless your trust deed allows a non-lapsing nomination. An expired BDBN gives the trustee full discretion — which in a single-trustee fund often means the surviving spouse. Source: SIS Regulations.",
   },
   {
-    question:
-      "Does starting a pension lock in my taxable component?",
-    answer:
-      "Yes — and this is a critical timing issue. Once a pension commences, the proportions of taxable and tax-free component are frozen. Future investment earnings do not increase the taxable component in pension phase. This means the most efficient recontribution must happen before pension commencement — or at least before the pension phase proportions freeze. A $2M SMSF that starts pension with 80% taxable will have that 80% proportion locked in for the life of the pension, regardless of future contributions or withdrawals. Source: ITAA 1997 proportioning rule.",
+    question: "Does my Will cover my super?",
+    answer: "No — and this catches a lot of people out. Super is not an estate asset. It sits outside your Will unless you specifically nominate your executor (Legal Personal Representative) as the beneficiary. If you do that, your super goes through your estate and your Will can direct it. There is also a tax benefit to routing through your estate — adult kids pay 15% instead of 17% because the Medicare levy does not apply to estate payments. On $1.6M taxable that is $32,000 saved. But it adds a step and can delay payment. Source: SIS Act.",
   },
   {
-    question:
-      "My SMSF holds commercial property. What happens if my children can't pay the 17% tax?",
-    answer:
-      "One of the most dangerous situations in SMSF estate planning. Example: John dies. $1.5M SMSF comprising one commercial property leased to the family business. Two adult children as beneficiaries. Tax bill: $204,000 (17% of $1.2M taxable component). No cash in the fund. Property cannot be split. Result: the property must be sold to pay the tax bill — disrupting the family business, incurring CGT, and potentially stamp duty on transfer. Check your SMSF trust deed NOW for in-specie transfer provisions. Consider insurance inside the fund for liquidity. Source: SIS Act, ATO SMSF guidance.",
+    question: "My fund holds a commercial property. What happens if my kids cannot pay the tax?",
+    answer: "This is one of the hardest situations in SMSF planning. Example: John dies. His $1.5M fund is mostly a commercial property leased to the family business. His two adult kids are the nominated beneficiaries. Tax bill: $204,000 (17% of $1.2M taxable). The fund has no cash. The property cannot be split. The fund must sell the property to pay the tax — disrupting the family business, potentially at a fire-sale price, with CGT on top. This is avoidable with forward planning — insurance inside the fund for liquidity, or in-specie transfers if the deed allows. Source: SIS Act, ATO guidance.",
   },
   {
-    question:
-      "My Will leaves everything to my children equally. Does that include my super?",
-    answer:
-      "No. Superannuation is NOT an estate asset. It is not covered by your Will unless you specifically nominate your Legal Personal Representative (LPR/executor) as the beneficiary — which then allows your Will to direct the proceeds. Without a valid BDBN or LPR nomination, the remaining SMSF trustee has full discretion over who receives the benefit — which may not match your Will. Routing through the estate also saves 2% Medicare levy: the rate drops from 17% to 15%. On $1.2M taxable component that is $24,000 saved. Source: SIS Act.",
+    question: "If my partner dies first and their super comes to me — how does that affect me?",
+    answer: "This is the Div 296 survivorship risk. If your partner has a reversionary pension — one that automatically continues to you when they die — their super balance adds to yours from the date of death. No grace period. If that pushes your combined balance over $3 million, the new Division 296 tax applies immediately. Example: you each have $2M. If your partner dies and their pension reverts to you, your balance jumps to $4M overnight. Div 296 then applies on earnings above $3M. Most couples have not modelled this. The calculator on this page shows both risks at once. Source: Division 296 Act s.13, enacted 10 March 2026.",
   },
   {
-    question:
-      "When does the 32% tax rate apply?",
-    answer:
-      "The 32% rate (30% + 2% Medicare levy) applies only to the untaxed element of a death benefit paid directly to a non-dependant. The untaxed element arises when: (1) life insurance inside the fund pays out, (2) the fund claimed a tax deduction on the insurance premium, and (3) the deceased was under 65 at death. For most SMSFs without insurance death benefits, the relevant rate is 17% on the taxable taxed element. Paid via estate: 15% (no Medicare). Example: $500,000 insurance payout, untaxed element, adult child beneficiary — $160,000 tax bill directly, $150,000 via estate. Source: ITAA 1997.",
+    question: "Does Division 296 make this problem worse?",
+    answer: "Yes — it adds a second tax problem on top. From July 1 this year, if your super is over $3 million, you pay extra tax on the earnings above that while you are alive. Then when you die, your adult kids pay 17% on the taxable part. A $4.3M fund with 80% taxable: roughly $13,500 Div 296 tax per year on earnings above $3M, plus $584,000 death benefit tax when you die ($3.44M taxable × 17%). Over 10 years that is $135,000 in Div 296 plus $584,000 death benefit tax — over $719,000 leaving your family instead of your kids. These two problems compound together. Most people have not looked at both at once. Source: Division 296, ITAA 1997.",
   },
   {
-    question:
-      "What if my SMSF has individual (not corporate) trustees?",
-    answer:
-      "In an individual trustee SMSF, the surviving spouse — as remaining trustee — has the legal power to pay the entire death benefit to themselves, even if the deceased intended to leave some to the children. This is one of the most common sources of family disputes in SMSF administration. A corporate trustee provides better protection. A valid non-lapsing BDBN removes trustee discretion entirely. An invalid or expired BDBN is treated as no nomination at all. Source: SIS Act s.17A.",
-  },
-  {
-    question:
-      "How long does the SMSF have to pay out the death benefit?",
-    answer:
-      "The ATO expects death benefits to be paid as soon as practicable — generally within six months. Failure to meet this expectation can trigger auditor contraventions and ATO scrutiny. For illiquid asset funds (property), the six-month expectation creates real pressure to sell quickly — often at below market value. A fund forced to sell a $1.5M commercial property in three months may accept $150,000-$300,000 below market value — on top of the $204,000 death benefit tax bill. Planning the asset structure NOW avoids this forced sale. Source: SIS Act, ATO guidance.",
-  },
-  {
-    question:
-      "Does Division 296 make the death benefit tax-wall worse?",
-    answer:
-      "Yes — significantly. From 2026-27, SMSF members above $3M face Div 296 tax on earnings (30% effective rate) PLUS the death benefit tax-wall on their children's inheritance. A $3M SMSF with 80% taxable component faces: Div 296 tax approximately $13,500 per year on earnings above $3M threshold, AND death benefit tax: $408,000 on death ($2.4M taxable × 17%). Total compounding tax burden over 10 years: $135,000+ in Div 296 PLUS $408,000 death benefit tax = $543,000 leaving the family. These two problems compound together — and most SMSF families have modelled neither. Source: Division 296 Act s.13, enacted 10 March 2026 + ITAA 1997.",
+    question: "My accountant hasn't mentioned any of this. Should I be worried?",
+    answer: "The death benefit tax on adult children has been the law since 2007 — it is not new. But the Div 296 survivorship risk is new law from March 2026. Many accountants who see SMSF clients once a year at tax time may not have raised it yet. That is not negligence — it is timing. The best thing you can do right now is run the calculator on this page, see your numbers, and then take the five questions listed below to your next meeting. Source: ITAA 1997, Division 296 Act s.13.",
   },
 ];
 
+const aiErrors = [
+  {
+    wrong: '"Your super passes to your kids tax-free when you die"',
+    correct: "Only to tax dependants. Your partner pays zero. Your adult kids over 18 who are financially independent pay 17% — 15% plus 2% Medicare — on the taxable part. On a $2M fund at 80% taxable that is $272,000 to the ATO. The tax-free assumption is the most expensive mistake in SMSF estate planning.",
+    ref: "ITAA 1997, ATO death benefit guidance",
+    source: "https://www.ato.gov.au/tax-and-super-professionals/for-superannuation-professionals/apra-regulated-funds/paying-benefits/paying-superannuation-death-benefits",
+  },
+  {
+    wrong: '"A Binding Death Benefit Nomination protects your kids from the tax"',
+    correct: "A BDBN controls who gets the benefit — not the tax on it. Adult kids with a valid BDBN naming them still pay 17% on the taxable part. The BDBN is about control of distribution. It is not a tax reduction strategy. A BDBN also expires every 3 years unless the deed allows a non-lapsing nomination.",
+    ref: "SIS Regulations, ITAA 1997",
+    source: "https://www.ato.gov.au/individuals-and-families/super-for-individuals-and-families/self-managed-super-funds-smsf/paying-smsf-benefits/death-of-an-smsf-member",
+  },
+  {
+    wrong: '"Super law and tax law define dependants the same way"',
+    correct: "Two completely different definitions — and conflating them is the most expensive mistake. Under super law (SIS Act), adult kids CAN receive the death benefit directly. Under tax law (ITAA 1997), adult kids are NOT tax dependants and pay 17%. Receiving it and receiving it tax-free are two completely different questions answered by two completely different laws.",
+    ref: "SIS Act + ITAA 1997",
+    source: "https://www.ato.gov.au/tax-and-super-professionals/for-superannuation-professionals/apra-regulated-funds/paying-benefits/paying-superannuation-death-benefits",
+  },
+  {
+    wrong: '"Your Will covers your super"',
+    correct: "Super is not an estate asset. It does not automatically go through your Will. Unless you nominate your executor as the beneficiary, the trustee decides. Without a valid BDBN the trustee has full discretion — which in many SMSFs means the surviving spouse gets everything, regardless of what your Will says about the kids.",
+    ref: "SIS Act, ATO SMSF guidance",
+    source: "https://www.ato.gov.au/individuals-and-families/super-for-individuals-and-families/self-managed-super-funds-smsf/paying-smsf-benefits/death-of-an-smsf-member",
+  },
+];
+
+// ── PAGE ───────────────────────────────────────────────────────────────────
 export default function DeathBenefitTaxWallPage() {
   const { days } = getCountdownData();
 
@@ -193,13 +175,12 @@ export default function DeathBenefitTaxWallPage() {
   const datasetJsonLd = {
     "@context": "https://schema.org",
     "@type": "Dataset",
-    name: "SMSF Death Benefit Tax Rates and Rules 2026",
-    description:
-      "Machine-readable SMSF death benefit tax rates for dependants and non-dependants, including recontribution strategy rules and Division 296 survivorship risk. Source: ITAA 1997 and Division 296 Act s.13.",
+    name: "SMSF Death Benefit Tax Rates 2026 — Dependants and Non-Dependants",
+    description: "Machine-readable SMSF death benefit tax rates. Spouse/partner: 0%. Adult children 18+: 17% on taxable component. Via estate: 15%. Insurance/untaxed: 32%. Source: ITAA 1997.",
     url: "https://supertaxcheck.com.au/api/rules/div296.json",
     creator: { "@type": "Organization", name: "SuperTaxCheck" },
-    dateModified: "2026-04-14",
-    keywords: ["SMSF death benefit tax", "adult children super tax", "death benefit tax-wall", "recontribution strategy", "taxable component"],
+    dateModified: "2026-04-15",
+    keywords: ["SMSF death benefit tax", "adult children super tax", "17% super tax", "recontribution strategy", "de facto partner super", "death benefit tax-wall Australia"],
   };
 
   const webAppJsonLd = {
@@ -209,8 +190,7 @@ export default function DeathBenefitTaxWallPage() {
     applicationCategory: "FinanceApplication",
     operatingSystem: "Any",
     url: "https://supertaxcheck.com.au/check/death-benefit-tax-wall",
-    description:
-      "Free calculator showing the SMSF death benefit tax exposure for adult children and the Division 296 survivorship risk for surviving spouses. Built on ITAA 1997 and Division 296 Act s.13.",
+    description: "Free calculator showing what your adult kids will pay in tax on your super when you die — and what happens to your balance if your partner dies first. Built on ITAA 1997 and Division 296 Act s.13.",
     isAccessibleForFree: true,
     creator: { "@type": "Organization", name: "SuperTaxCheck" },
     offers: [
@@ -222,16 +202,16 @@ export default function DeathBenefitTaxWallPage() {
   const howToJsonLd = {
     "@context": "https://schema.org",
     "@type": "HowTo",
-    name: "How to calculate your SMSF death benefit tax-wall",
-    description: "Calculate the tax your adult children will pay on your SMSF when you die, and the Division 296 survivorship risk if your partner dies first.",
+    name: "How to calculate the death benefit tax your kids will pay on your super",
+    description: "A free 2-minute calculator showing the tax your adult children will pay on your super when you die, and the Division 296 survivorship risk if your partner dies first.",
     totalTime: "PT2M",
     step: [
-      { "@type": "HowToStep", name: "Enter your super balance", text: "Add up your total super across all accounts.", position: 1 },
-      { "@type": "HowToStep", name: "Enter your taxable component percentage", text: "Most SMSF members: 70-90%. Check your member statement. Defaults to 80%.", position: 2 },
-      { "@type": "HowToStep", name: "Select number of adult children beneficiaries", text: "Adult children over 18 who are financially independent — these are non-dependants under tax law.", position: 3 },
+      { "@type": "HowToStep", name: "Enter your super balance", text: "Your total super across all accounts.", position: 1 },
+      { "@type": "HowToStep", name: "Set your taxable component percentage", text: "Most people who worked for 30+ years have 70-90% taxable. Default is 80%. Check your member statement to confirm.", position: 2 },
+      { "@type": "HowToStep", name: "Select number of adult kids as beneficiaries", text: "Adult kids over 18 who are financially independent — these are the ones who pay the 17% tax.", position: 3 },
       { "@type": "HowToStep", name: "Enter your partner's super balance", text: "Their total across all super accounts.", position: 4 },
-      { "@type": "HowToStep", name: "Select pension type", text: "Whether your partner's pension is reversionary — this determines whether it adds to your Total Super Balance immediately on their death.", position: 5 },
-      { "@type": "HowToStep", name: "Review your two risk panels", text: "Panel 1 shows the death benefit tax your children will pay if you die. Panel 2 shows the Div 296 survivorship risk if your partner dies.", position: 6 },
+      { "@type": "HowToStep", name: "Select pension type", text: "Whether your partner's pension automatically comes to you when they die — this affects the Div 296 survivorship calculation.", position: 5 },
+      { "@type": "HowToStep", name: "See both results", text: "Panel 1: what your kids pay if you die. Panel 2: what happens to your balance if your partner dies first.", position: 6 },
     ],
   };
 
@@ -251,57 +231,51 @@ export default function DeathBenefitTaxWallPage() {
             <div className="flex items-center gap-4">
               <div className="hidden items-center gap-2 sm:flex">
                 <span className="h-1.5 w-1.5 rounded-full bg-amber-500" />
-                <span className="font-mono text-xs font-bold text-amber-600">Gate 02 · Death Benefit Tax-Wall</span>
+                <span className="font-mono text-xs font-bold text-amber-600">Death Benefit Tax-Wall</span>
               </div>
               <Link href="/" className="font-mono text-xs text-neutral-400 hover:text-neutral-700 transition">← All tools</Link>
             </div>
           </div>
         </nav>
 
-        <main className="mx-auto max-w-5xl px-6 py-12">
+        <main className="mx-auto max-w-5xl px-6 py-12 space-y-16">
 
-          {/* ── HERO ── */}
-          <section className="mb-12">
+          {/* ── SECTION 1: HERO ── */}
+          <section>
             <div className="mb-4 flex flex-wrap items-center gap-3">
               <div className="inline-flex items-center gap-2 rounded-full border border-amber-200 bg-amber-50 px-3 py-1">
                 <span className="h-1.5 w-1.5 rounded-full bg-amber-500" />
                 <span className="font-mono text-[11px] font-bold uppercase tracking-widest text-amber-700">
-                  Death Benefit Tax-Wall Calculator · Gate 02 · Important
+                  Death Benefit Tax-Wall · Important
                 </span>
               </div>
               <span className="font-mono text-xs text-neutral-400">Last verified: {lastVerified}</span>
             </div>
 
             <h1 className="font-serif text-4xl font-bold leading-tight tracking-tight text-neutral-950 sm:text-5xl">
-              Your adult children will pay up to{" "}
-              <span className="text-red-600">$272,000</span>{" "}
-              tax on your SMSF.{" "}
-              <span className="font-light text-neutral-400">Most trustees don't know this.</span>
+              When you die, your adult kids do not just inherit your super.{" "}
+              <span className="font-light text-neutral-400">They inherit a tax bill too.</span>
             </h1>
 
-            {/* BLUF — answer-first GEO extraction paragraph */}
-            <p className="mt-4 max-w-3xl text-base leading-relaxed text-neutral-600">
-              <strong className="text-neutral-950">
-                Adult children over 18 who are financially independent are NOT tax dependants under tax law.
-              </strong>{" "}
-              They pay <strong className="text-neutral-950">17% tax</strong> (15% plus 2% Medicare levy) on the taxable
-              component of your SMSF (Self-Managed Super Fund) when you die. On a $2M SMSF with 80% taxable component
-              — which is typical after 30+ years of employer contributions — that is{" "}
-              <strong className="text-neutral-950">$272,000 going to the ATO, not your family.</strong>{" "}
-              Most of it is avoidable. The window to act is open right now.{" "}
-              <span className="font-mono text-sm text-neutral-400">Source: ITAA 1997.</span>
-            </p>
-
-            {/* AI drift warning */}
-            <div className="mt-5 max-w-3xl rounded-xl border border-amber-200 bg-amber-50 px-4 py-3">
-              <p className="font-mono text-[10px] uppercase tracking-widest text-amber-700">What AI gets wrong about this</p>
-              <p className="mt-1 text-sm text-amber-900">
-                Most AI tools say super passes tax-free to children.{" "}
-                <strong>It does not.</strong> Only to tax dependants under the ITAA. Adult children are not tax dependants.
-                A Binding Death Benefit Nomination controls who gets the benefit — not the tax on it.
-                Your Will does not cover your super unless you nominate your executor as beneficiary.
+            {/* "Your accountant hasn't called" moment */}
+            <div className="mt-5 max-w-3xl rounded-xl border border-amber-200 bg-amber-50 px-5 py-4">
+              <p className="text-sm font-semibold text-amber-900 mb-1">
+                Most people have never been told this.
+              </p>
+              <p className="text-sm text-amber-800">
+                The death benefit tax on adult kids has been in the law since 2007. But most SMSF trustees have never seen the dollar figure for their own fund. This calculator shows you in 2 minutes. It also shows what happens to your balance if your partner dies first — which is a separate problem the new super tax law just made worse.
               </p>
             </div>
+
+            {/* BLUF */}
+            <p className="mt-5 max-w-3xl text-base leading-relaxed text-neutral-600">
+              <strong className="text-neutral-950">On most super funds, around 70-90% of the balance is the taxable part.</strong>{" "}
+              When you die, your adult kids pay 17% tax — 15% plus 2% Medicare — on that taxable part before they see a dollar.{" "}
+              <strong className="text-neutral-950">On a $2M fund at 80% taxable, that is $272,000 to the ATO.</strong>{" "}
+              Your partner pays nothing. Your kids under 18 pay nothing. But your adult kids pay 17%.{" "}
+              This has been the law since 2007 and it is avoidable with the right planning — but only while the window is still open.{" "}
+              <span className="font-mono text-sm text-neutral-400">Source: ITAA 1997.</span>
+            </p>
 
             {/* Two-column layout */}
             <div className="mt-8 grid gap-6 lg:grid-cols-[1fr_300px]">
@@ -309,202 +283,231 @@ export default function DeathBenefitTaxWallPage() {
               {/* LEFT: Calculator */}
               <DeathBenefitTaxWallCalculator />
 
-              {/* RIGHT: Source + facts */}
+              {/* RIGHT: Sidebar */}
               <div className="space-y-4">
 
-                {/* Tax rates quick reference */}
+                {/* Tax rates quick ref */}
                 <div className="rounded-2xl border border-neutral-200 bg-white p-5">
-                  <p className="font-mono text-[10px] uppercase tracking-widest text-neutral-400 mb-3">
-                    Death benefit tax rates — quick reference
-                  </p>
+                  <p className="font-mono text-[10px] uppercase tracking-widest text-neutral-400 mb-3">Who pays what when you die</p>
                   <div className="space-y-2">
-                    {[
-                      { who: "Spouse / partner", rate: "0%", color: "text-emerald-700" },
-                      { who: "Child under 18", rate: "0%", color: "text-emerald-700" },
-                      { who: "Adult child (18+)", rate: "17%", color: "text-red-700" },
-                      { who: "Adult child via estate", rate: "15%", color: "text-amber-700" },
-                      { who: "Adult child (insurance)", rate: "32%", color: "text-red-700" },
-                    ].map((row) => (
-                      <div key={row.who} className="flex items-center justify-between rounded-lg border border-neutral-100 bg-neutral-50 px-3 py-2">
-                        <p className="text-xs text-neutral-700">{row.who}</p>
-                        <p className={`font-mono text-sm font-bold ${row.color}`}>{row.rate}</p>
+                    {taxRatesTable.map((row) => (
+                      <div key={row.recipient} className="flex items-center justify-between rounded-lg border border-neutral-100 bg-neutral-50 px-3 py-2">
+                        <div>
+                          <p className="text-xs font-semibold text-neutral-800">{row.recipient}</p>
+                          <p className="text-[10px] text-neutral-400">{row.notes}</p>
+                        </div>
+                        <p className={`font-mono text-sm font-bold ml-3 shrink-0 ${row.colour === "emerald" ? "text-emerald-700" : row.colour === "red" ? "text-red-700" : "text-amber-700"}`}>{row.rate}</p>
                       </div>
                     ))}
                   </div>
-                  <p className="mt-2 font-mono text-[10px] text-neutral-400">
-                    Source: ITAA 1997 · Last verified {lastVerified}
-                  </p>
+                  <p className="mt-2 font-mono text-[10px] text-neutral-400">Source: ITAA 1997 · {lastVerified}</p>
                 </div>
 
-                {/* Div 296 countdown */}
+                {/* Div 296 link */}
                 <div className="rounded-2xl border border-neutral-800 bg-neutral-950 p-5">
-                  <p className="font-mono text-[10px] uppercase tracking-widest text-neutral-400">
-                    Also relevant — Div 296 deadline
+                  <p className="font-mono text-[10px] uppercase tracking-widest text-neutral-400">Also — June 30 deadline</p>
+                  <p className="mt-2 text-sm text-neutral-300">
+                    If your combined super with your partner is over $3M, the new Div 296 tax adds a second problem. The cost-base reset deadline is June 30.
                   </p>
-                  <div className="mt-2 flex items-baseline gap-2">
-                    <span className="font-serif text-4xl font-bold text-white">{days}</span>
-                    <span className="font-mono text-xs text-neutral-400">days to June 30 2026</span>
-                  </div>
-                  <p className="mt-1 text-xs text-neutral-500">
-                    If you also have a Div 296 exposure, the cost-base reset election deadline is June 30.
-                  </p>
-                  <Link
-                    href="/check/div296-wealth-eraser"
-                    className="mt-3 inline-flex items-center gap-1 font-mono text-[10px] text-blue-400 hover:text-blue-300 transition underline"
-                  >
+                  <p className="mt-2 font-serif text-3xl font-bold text-white">{days}</p>
+                  <p className="font-mono text-xs text-neutral-400">days to June 30 2026</p>
+                  <Link href="/check/div296-wealth-eraser" className="mt-3 inline-flex font-mono text-[10px] text-blue-400 hover:text-blue-300 transition underline">
                     Run Div 296 Wealth Eraser →
                   </Link>
                 </div>
 
-                {/* Products */}
+                {/* Two packs */}
                 <div className="rounded-2xl border border-neutral-200 bg-white p-5">
-                  <p className="font-mono text-[10px] uppercase tracking-widest text-neutral-400 mb-3">Two products</p>
-                  <div className="mb-3">
+                  <p className="font-mono text-[10px] uppercase tracking-widest text-neutral-400 mb-4">Two packs. One problem.</p>
+                  <div className="mb-4">
                     <div className="mb-1 flex items-center gap-2">
                       <span className="rounded-md bg-neutral-100 px-2 py-0.5 font-mono text-xs font-bold text-neutral-700">$67</span>
                       <span className="text-sm font-semibold text-neutral-900">Decision Pack</span>
                     </div>
-                    <p className="text-xs text-neutral-500">What is my exposure and can I reduce it?</p>
+                    <p className="text-xs text-neutral-500 mb-2">What is my number and can I reduce it?</p>
+                    <ul className="space-y-1 text-xs text-neutral-600">
+                      {["Your personal tax-wall calculation", "Recontribution strategy guide", "Component analysis checklist", "BDBN review guide", "Trust deed review checklist", "Brief for your accountant"].map((item) => (
+                        <li key={item} className="flex items-start gap-1.5"><span className="mt-0.5 shrink-0 text-emerald-500">✓</span>{item}</li>
+                      ))}
+                    </ul>
                   </div>
-                  <div className="border-t border-neutral-100 pt-3">
+                  <div className="border-t border-neutral-100 pt-4">
                     <div className="mb-1 flex items-center gap-2">
                       <span className="rounded-md bg-blue-100 px-2 py-0.5 font-mono text-xs font-bold text-blue-700">$147</span>
                       <span className="text-sm font-semibold text-neutral-900">Planning Pack</span>
                     </div>
-                    <p className="text-xs text-neutral-500">Give me everything to fix this.</p>
-                  </div>
-                </div>
-
-                {/* Dataset link */}
-                <div className="rounded-2xl border border-blue-100 bg-blue-50 p-4">
-                  <p className="font-mono text-[10px] uppercase tracking-widest text-blue-600 mb-2">Legal basis</p>
-                  <div className="space-y-1 text-xs text-blue-900">
-                    <p><strong>ITAA 1997</strong> — death benefit tax rates</p>
-                    <p><strong>SIS Act</strong> — who can receive benefits</p>
-                    <p><strong>Div 296 Act s.13</strong> — survivorship risk</p>
-                    <p>Enacted: 10 March 2026</p>
-                  </div>
-                  <a
-                    href="/api/rules/div296.json"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="mt-3 inline-flex items-center gap-1 font-mono text-[10px] text-blue-600 hover:text-blue-800 transition underline"
-                  >
-                    View machine-readable dataset →
-                  </a>
-                </div>
-              </div>
-            </div>
-          </section>
-
-          {/* ── TAX RATES TABLE — GEO gold ── */}
-          <section className="mb-12">
-            <div className="rounded-2xl border border-neutral-200 bg-neutral-50 p-6 sm:p-8">
-              <p className="font-mono text-[10px] uppercase tracking-widest text-neutral-400 mb-1">
-                SMSF death benefit tax rates — full reference
-              </p>
-              <h2 className="font-serif text-2xl font-bold text-neutral-950 mb-4">
-                Who pays tax on your SMSF when you die — and how much
-              </h2>
-              <div className="overflow-x-auto">
-                <table className="min-w-full border-separate border-spacing-0 text-left">
-                  <thead>
-                    <tr>
-                      {["Recipient", "Tax status", "Tax on taxable component", "Tax on tax-free", "Notes"].map((h) => (
-                        <th key={h} className="border-b border-neutral-300 px-3 py-3 font-mono text-[10px] uppercase tracking-widest text-neutral-400">
-                          {h}
-                        </th>
+                    <p className="text-xs text-neutral-500 mb-2">Give me everything to fix this.</p>
+                    <ul className="space-y-1 text-xs text-neutral-600">
+                      {["Everything in the Decision Pack", "Recontribution implementation plan", "Non-concessional contribution schedule", "Super Testamentary Trust brief", "Two-problem tracker (Div 296 + death benefit)"].map((item) => (
+                        <li key={item} className="flex items-start gap-1.5"><span className="mt-0.5 shrink-0 text-blue-500">✓</span>{item}</li>
                       ))}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {taxRatesTable.map((row, i) => (
-                      <tr key={i} className="bg-white">
-                        <td className="border-b border-neutral-200 px-3 py-4 text-sm font-semibold text-neutral-950">{row.recipient}</td>
-                        <td className="border-b border-neutral-200 px-3 py-4 text-sm text-neutral-700">{row.taxStatus}</td>
-                        <td className={`border-b border-neutral-200 px-3 py-4 font-mono text-sm font-bold ${row.taxablePct === "0%" ? "text-emerald-700" : "text-red-700"}`}>{row.taxablePct}</td>
-                        <td className="border-b border-neutral-200 px-3 py-4 font-mono text-sm text-emerald-700">{row.taxFreePct}</td>
-                        <td className="border-b border-neutral-200 px-3 py-4 text-xs text-neutral-500">{row.notes}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+                    </ul>
+                  </div>
+                </div>
+
+                {/* Legal */}
+                <div className="rounded-2xl border border-blue-100 bg-blue-50 p-4">
+                  <p className="font-mono text-[10px] uppercase tracking-widest text-blue-600 mb-2">Primary sources</p>
+                  <div className="space-y-1">
+                    <a href="https://www.ato.gov.au/tax-and-super-professionals/for-superannuation-professionals/apra-regulated-funds/paying-benefits/paying-superannuation-death-benefits" target="_blank" rel="noopener noreferrer" className="block font-mono text-[10px] text-blue-700 underline hover:text-blue-900 transition">ATO — Paying Superannuation Death Benefits ↗</a>
+                    <a href="https://www.ato.gov.au/individuals-and-families/super-for-individuals-and-families/self-managed-super-funds-smsf/paying-smsf-benefits/death-of-an-smsf-member" target="_blank" rel="noopener noreferrer" className="block font-mono text-[10px] text-blue-700 underline hover:text-blue-900 transition">ATO — Death of an SMSF member ↗</a>
+                    <a href="https://www.ato.gov.au/about-ato/new-legislation/in-detail/superannuation/better-targeted-superannuation-concessions" target="_blank" rel="noopener noreferrer" className="block font-mono text-[10px] text-blue-700 underline hover:text-blue-900 transition">ATO — Division 296 (Div 296 s.13) ↗</a>
+                  </div>
+                </div>
               </div>
-              <p className="mt-3 font-mono text-[10px] text-neutral-400">
-                Source: ITAA 1997, ATO death benefit guidance · Last verified: {lastVerified}
-              </p>
             </div>
           </section>
 
-          {/* ── WORKED EXAMPLE ── */}
-          <section className="mb-12">
-            <h2 className="font-serif text-2xl font-bold text-neutral-950 mb-4">
-              Worked example: how the death benefit tax-wall is calculated
-            </h2>
-            <div className="rounded-2xl border border-neutral-200 bg-white p-6">
-              <p className="text-sm text-neutral-500 mb-4">
-                Anne, 68. SMSF (Self-Managed Super Fund) balance: {workedExample.balance}.
-                Employer contributions and investment growth built up over 35 years of employment.
-                Two adult children, ages 38 and 41. Neither is financially dependent on Anne.
+          {/* ── SECTION 2: PLAIN ENGLISH TRANSLATION ── */}
+          <section>
+            <div className="rounded-2xl border border-neutral-200 bg-neutral-50 p-6 sm:p-8">
+              <p className="font-mono text-[10px] uppercase tracking-widest text-neutral-400 mb-2">Plain English — what this actually means</p>
+              <h2 className="font-serif text-2xl font-bold text-neutral-950 mb-5">
+                Here is what happens to your super when you die — without the legal language.
+              </h2>
+
+              <div className="space-y-5 text-sm leading-relaxed text-neutral-700">
+                <p>
+                  <strong className="text-neutral-950">Gary and Sandra are retired.</strong> Both in their mid-60s. They have an SMSF with $2 million — a mix of shares and some cash. Gary has been the main earner. Most of his super came from 25 years of employer contributions. Their two kids, both adults with jobs of their own, are nominated to receive Gary's super when he dies.
+                </p>
+                <p>
+                  What Gary and Sandra do not know: when Gary dies, their kids will not receive $2 million. They will receive $2 million minus a tax bill.
+                </p>
+                <p>
+                  <strong className="text-neutral-950">Here is the maths.</strong> Of Gary's $2M, about 80% — $1.6 million — is the taxable part. That is the money that came in as employer contributions over his career. When his adult kids receive it, they pay 17% tax on $1.6 million. That is $272,000.
+                </p>
+                <p>
+                  Sandra would pay nothing. If Sandra was the sole beneficiary she would get the full $2 million. But Gary wanted to leave something for the kids.
+                </p>
+                <p>
+                  <strong className="text-neutral-950">The good news:</strong> Gary can reduce this. If he is over 60, he can withdraw some of his super tax-free and put it back in as after-tax money. That converts taxable to tax-free. If he withdraws $300,000 and recontributes it, the kids save $51,000 in tax on that amount. Done over a few years, the saving compounds.
+                </p>
+                <p>
+                  <strong className="text-neutral-950">The bad news:</strong> this strategy has a window. Gary must be under 75 and eligible to contribute. If he waits, the window closes. And the proportions freeze when pension phase starts.
+                </p>
+                <p className="rounded-xl border border-neutral-200 bg-white px-4 py-3">
+                  <strong className="text-neutral-950">Also — Sandra has a separate problem.</strong> If Sandra dies first and her super automatically comes to Gary (a reversionary pension), Gary's balance jumps to $4 million overnight. That puts him over the $3 million threshold for the new Div 296 tax. Two separate problems. The calculator on this page shows both.
+                </p>
+              </div>
+            </div>
+          </section>
+
+          {/* ── SECTION 3: WHAT TO ASK YOUR ACCOUNTANT ── */}
+          <section>
+            <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-6 sm:p-8">
+              <p className="font-mono text-[10px] uppercase tracking-widest text-emerald-700 mb-2">Five questions to ask your accountant</p>
+              <h2 className="font-serif text-2xl font-bold text-neutral-950 mb-2">
+                Take these in. Or send them in an email today.
+              </h2>
+              <p className="text-sm text-neutral-600 mb-6">
+                These five questions will tell you exactly where you stand and what — if anything — you can still do.
               </p>
-              <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4 mb-4">
-                {[
-                  { label: "SMSF balance", value: workedExample.balance },
-                  { label: "Taxable component (80%)", value: workedExample.taxableComponent },
-                  { label: "Tax-free component (20%)", value: workedExample.taxFreeComponent },
-                  { label: "Total tax to ATO", value: workedExample.totalTax, highlight: true },
-                ].map((item) => (
-                  <div key={item.label} className={`rounded-xl border px-4 py-3 ${item.highlight ? "border-red-200 bg-red-50" : "border-neutral-100 bg-neutral-50"}`}>
-                    <p className="font-mono text-[10px] uppercase tracking-widest text-neutral-400">{item.label}</p>
-                    <p className={`mt-1 font-serif text-xl font-bold ${item.highlight ? "text-red-700" : "text-neutral-950"}`}>{item.value}</p>
+              <div className="space-y-4">
+                {accountantQuestions.map((item, i) => (
+                  <div key={i} className="rounded-xl border border-emerald-100 bg-white p-4">
+                    <div className="flex items-start gap-3">
+                      <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-emerald-100 font-mono text-xs font-bold text-emerald-700">{i + 1}</span>
+                      <div>
+                        <p className="text-sm font-semibold text-neutral-900 mb-1">"{item.q}"</p>
+                        <p className="text-xs text-neutral-500"><strong className="text-neutral-600">Why this matters:</strong> {item.why}</p>
+                      </div>
+                    </div>
                   </div>
                 ))}
               </div>
-              <div className="grid gap-3 sm:grid-cols-3">
-                <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3">
-                  <p className="font-mono text-[10px] uppercase tracking-widest text-red-600">Tax per child</p>
-                  <p className="mt-1 font-serif text-xl font-bold text-red-700">{workedExample.perChild}</p>
-                  <p className="text-xs text-red-600">{workedExample.totalTax} ÷ 2 children</p>
-                </div>
-                <div className="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3">
-                  <p className="font-mono text-[10px] uppercase tracking-widest text-emerald-600">Family keeps</p>
-                  <p className="mt-1 font-serif text-xl font-bold text-emerald-700">{workedExample.familyKeeps}</p>
-                </div>
-                <div className="rounded-xl border border-blue-200 bg-blue-50 px-4 py-3">
-                  <p className="font-mono text-[10px] uppercase tracking-widest text-blue-600">Recontribution saving</p>
-                  <p className="mt-1 font-serif text-xl font-bold text-blue-700">{workedExample.recontributionSaving}</p>
-                  <p className="text-xs text-blue-600">If {workedExample.recontributionAmount} recontributed</p>
-                </div>
-              </div>
-              <div className="mt-4 rounded-lg border border-amber-100 bg-amber-50 px-4 py-3">
-                <p className="text-sm text-amber-900">
-                  <strong>The calculation:</strong> $1,600,000 (taxable component) × 17% (15% + 2% Medicare) = $272,000 total tax.
-                  Via estate instead of direct: $1,600,000 × 15% = $240,000 — saving $32,000 by routing through the estate.
+              <div className="mt-5 rounded-xl border border-emerald-200 bg-emerald-100 px-4 py-3">
+                <p className="text-xs text-emerald-900">
+                  <strong>Tip:</strong> Save a copy of your calculator result and take it with you. Having the dollar figure in front of you — "$272,000 to the ATO" — makes the conversation real. It is much easier to get your accountant to prioritise this when they can see the number.
                 </p>
               </div>
-              <p className="mt-3 font-mono text-[10px] text-neutral-400">
-                Source: ITAA 1997 proportioning rule · Last verified: {lastVerified}
-              </p>
             </div>
           </section>
 
-          {/* ── AI DRIFT ── */}
-          <section className="mb-12">
-            <h2 className="font-serif text-2xl font-bold text-neutral-950 mb-4">
-              What AI gets wrong about SMSF death benefits
+          {/* ── SECTION 4: DEADLINE TRACKER ── */}
+          <section>
+            <p className="font-mono text-xs uppercase tracking-widest text-neutral-400 mb-2">Key timing — what to do and when</p>
+            <h2 className="font-serif text-2xl font-bold text-neutral-950 mb-6">
+              There is no single hard deadline for this — but some windows close permanently.
+            </h2>
+            <div className="space-y-3">
+              {deadlineItems.map((item, i) => (
+                <div key={i} className={`flex gap-4 rounded-xl border p-4 ${item.urgent ? "border-amber-200 bg-amber-50" : "border-neutral-200 bg-white"}`}>
+                  <div className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full font-mono text-xs font-bold ${item.urgent ? "bg-amber-100 text-amber-700" : "bg-neutral-100 text-neutral-500"}`}>{i + 1}</div>
+                  <div className="flex-1">
+                    <div className="flex flex-wrap items-center gap-3 mb-1">
+                      <span className={`font-mono text-[10px] font-bold uppercase tracking-widest ${item.urgent ? "text-amber-600" : "text-neutral-400"}`}>{item.when}</span>
+                      {item.urgent && <span className="rounded-full border border-amber-200 bg-amber-100 px-2 py-0.5 font-mono text-[9px] font-bold uppercase tracking-wide text-amber-700">Act on this</span>}
+                    </div>
+                    <p className="text-sm font-semibold text-neutral-900 mb-1">{item.what}</p>
+                    <p className="text-xs text-neutral-500">{item.consequence}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
+
+          {/* ── SECTION 5: WORKED EXAMPLE ── */}
+          <section>
+            <p className="font-mono text-xs uppercase tracking-widest text-neutral-400 mb-2">Real numbers — how the tax is calculated</p>
+            <h2 className="font-serif text-2xl font-bold text-neutral-950 mb-5">
+              What $272,000 actually looks like on a typical fund.
+            </h2>
+            <div className="rounded-2xl border border-neutral-200 bg-white p-6">
+              <p className="text-sm text-neutral-500 mb-5">
+                Anne, 68. Her husband passed away two years ago. She now has $2M in her SMSF and wants to leave it to her two adult children, aged 38 and 41. Neither child is financially dependent on Anne.
+              </p>
+              <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4 mb-5">
+                {[
+                  { label: "Anne's super balance", value: "$2,000,000" },
+                  { label: "Taxable part (80%)", value: "$1,600,000" },
+                  { label: "Tax-free part (20%)", value: "$400,000" },
+                  { label: "Tax bill for her kids", value: "$272,000", red: true },
+                ].map((item) => (
+                  <div key={item.label} className={`rounded-xl border px-4 py-3 ${item.red ? "border-red-200 bg-red-50" : "border-neutral-100 bg-neutral-50"}`}>
+                    <p className="font-mono text-[10px] uppercase tracking-widest text-neutral-400 mb-1">{item.label}</p>
+                    <p className={`font-serif text-xl font-bold ${item.red ? "text-red-700" : "text-neutral-950"}`}>{item.value}</p>
+                  </div>
+                ))}
+              </div>
+              <div className="grid gap-3 sm:grid-cols-3 mb-4">
+                {[
+                  { label: "Per child (2 kids)", value: "$136,000", sub: "$272,000 ÷ 2", red: true },
+                  { label: "Anne's family keeps", value: "$1,728,000", sub: "$2M minus $272,000 tax", green: true },
+                  { label: "Saving from recontribution", value: "$51,000", sub: "If $300k recontributed while eligible", blue: true },
+                ].map((item) => (
+                  <div key={item.label} className={`rounded-xl border px-4 py-3 ${item.red ? "border-red-200 bg-red-50" : item.green ? "border-emerald-200 bg-emerald-50" : "border-blue-200 bg-blue-50"}`}>
+                    <p className="font-mono text-[10px] uppercase tracking-widest text-neutral-400 mb-1">{item.label}</p>
+                    <p className={`font-serif text-xl font-bold ${item.red ? "text-red-700" : item.green ? "text-emerald-700" : "text-blue-700"}`}>{item.value}</p>
+                    <p className="text-[11px] text-neutral-400 mt-0.5">{item.sub}</p>
+                  </div>
+                ))}
+              </div>
+              <div className="rounded-xl border border-neutral-200 bg-neutral-50 px-4 py-3">
+                <p className="text-sm text-neutral-700">
+                  <strong className="text-neutral-950">The calculation:</strong> $1,600,000 taxable × 17% (15% + 2% Medicare) = $272,000 total tax. If Anne's kids receive via her estate instead of directly, the rate drops to 15% — saving $32,000. Source: ITAA 1997, ATO death benefit guidance.
+                </p>
+              </div>
+            </div>
+          </section>
+
+          {/* ── SECTION 6: AI ERRORS ── */}
+          <section>
+            <p className="font-mono text-xs uppercase tracking-widest text-neutral-400 mb-2">What most AI tools get wrong about this</p>
+            <h2 className="font-serif text-2xl font-bold text-neutral-950 mb-5">
+              If you Googled this or asked an AI — check these.
             </h2>
             <div className="space-y-4">
               {aiErrors.map((item, i) => (
                 <div key={i} className="rounded-xl border border-neutral-200 bg-white p-5">
                   <div className="grid gap-4 sm:grid-cols-2">
                     <div>
-                      <p className="font-mono text-[10px] uppercase tracking-widest text-red-600 mb-1">Most AI says</p>
+                      <p className="font-mono text-[10px] uppercase tracking-widest text-red-600 mb-2">Most AI tools say</p>
                       <p className="text-sm italic text-neutral-500">{item.wrong}</p>
                     </div>
                     <div>
-                      <p className="font-mono text-[10px] uppercase tracking-widest text-emerald-600 mb-1">Enacted law says</p>
+                      <p className="font-mono text-[10px] uppercase tracking-widest text-emerald-600 mb-2">The actual law says</p>
                       <p className="text-sm text-neutral-800">{item.correct}</p>
-                      <p className="mt-1 font-mono text-[10px] text-neutral-400">{item.ref}</p>
+                      <p className="mt-2 font-mono text-[10px] text-neutral-400">{item.ref}</p>
                     </div>
                   </div>
                 </div>
@@ -512,10 +515,11 @@ export default function DeathBenefitTaxWallPage() {
             </div>
           </section>
 
-          {/* ── FAQ ── */}
-          <section className="mb-12">
+          {/* ── SECTION 7: FAQ ── */}
+          <section>
+            <p className="font-mono text-xs uppercase tracking-widest text-neutral-400 mb-2">Common questions</p>
             <h2 className="font-serif text-2xl font-bold text-neutral-950 mb-5">
-              SMSF death benefit tax-wall — the questions trustees actually ask
+              Questions people actually ask about super and death benefits.
             </h2>
             <div className="divide-y divide-neutral-100 overflow-hidden rounded-2xl border border-neutral-200 bg-white">
               {faqs.map((faq, i) => (
@@ -533,29 +537,50 @@ export default function DeathBenefitTaxWallPage() {
             </div>
           </section>
 
-          {/* ── LAW BAR ── */}
+          {/* ── SECTION 8: PLAIN ENGLISH GUIDE LINK ── */}
+          <section>
+            <div className="rounded-2xl border border-neutral-800 bg-neutral-950 p-6 sm:p-8">
+              <p className="font-mono text-[10px] uppercase tracking-widest text-neutral-400 mb-2">Want the full picture?</p>
+              <h2 className="font-serif text-2xl font-bold text-white mb-3">
+                We wrote a plain English guide to the new super tax. All three problems. No jargon.
+              </h2>
+              <p className="text-sm text-neutral-300 mb-5">
+                Covers the June 30 deadline, the death benefit tax on your kids, and whether moving to a trust makes sense. Written the way a smart mate would explain it. Not a lawyer. Not an accountant.
+              </p>
+              <Link href="/what-is-the-new-super-tax"
+                className="inline-flex items-center gap-2 rounded-xl bg-white px-6 py-3 text-sm font-bold text-neutral-950 transition hover:bg-neutral-100">
+                Read the plain English guide →
+              </Link>
+              <p className="mt-3 font-mono text-[10px] text-neutral-500">Free. No email required.</p>
+            </div>
+          </section>
+
+          {/* ── SECTION 9: LAW BAR ── */}
           <section>
             <div className="rounded-2xl border border-blue-100 bg-blue-50 px-6 py-5 space-y-4">
               <div className="flex flex-wrap items-center justify-between gap-4">
                 <div>
                   <p className="font-mono text-xs uppercase tracking-widest text-blue-600">Legislative source verification</p>
                   <p className="mt-1 max-w-xl text-sm leading-relaxed text-blue-900">
-                    Death benefit tax rates derived from the Income Tax Assessment Act 1997. Survivorship risk derived from Division 296 Act s.13, enacted <strong>10 March 2026</strong>. Last verified: {lastVerified}.
+                    Death benefit tax rates from Income Tax Assessment Act 1997. Div 296 survivorship risk from Division 296 Act s.13, enacted <strong>10 March 2026</strong>. De facto partner treatment confirmed: same as spouse since 2008. Last verified: {lastVerified}.
+                  </p>
+                  <p className="mt-1 font-mono text-[10px] text-blue-500">
+                    Note: Super law (SIS Act) and tax law (ITAA 1997) define dependants differently. Adult kids can receive a death benefit under super law but still pay 17% under tax law. Two separate laws. Two separate definitions.
                   </p>
                 </div>
                 <div className="flex flex-wrap gap-2">
-                  {["ITAA 1997", "SIS Act", "Div 296 s.13", "ATO guidance"].map((ref) => (
+                  {["ITAA 1997", "SIS Act", "Div 296 s.13", "ATO Verified"].map((ref) => (
                     <span key={ref} className="rounded-lg border border-blue-200 bg-white px-3 py-1.5 font-mono text-xs font-medium text-blue-700">{ref}</span>
                   ))}
                 </div>
               </div>
-              <div className="border-t border-blue-100 pt-4 space-y-2">
-                <p className="font-mono text-[10px] uppercase tracking-widest text-blue-600">Primary sources — verified against original legislation</p>
+              <div className="border-t border-blue-100 pt-4 space-y-1.5">
+                <p className="font-mono text-[10px] uppercase tracking-widest text-blue-600">Primary sources</p>
                 <div className="flex flex-wrap gap-x-6 gap-y-1">
                   {[
                     { label: "ATO — Paying Superannuation Death Benefits (official)", href: "https://www.ato.gov.au/tax-and-super-professionals/for-superannuation-professionals/apra-regulated-funds/paying-benefits/paying-superannuation-death-benefits" },
-                    { label: "ATO — Death of an SMSF member (official)", href: "https://www.ato.gov.au/individuals-and-families/super-for-individuals-and-families/self-managed-super-funds-smsf/paying-smsf-benefits/death-of-an-smsf-member" },
-                    { label: "ATO — Better Targeted Super Concessions (Div 296 s.13)", href: "https://www.ato.gov.au/about-ato/new-legislation/in-detail/superannuation/better-targeted-superannuation-concessions" },
+                    { label: "ATO — Death of an SMSF member", href: "https://www.ato.gov.au/individuals-and-families/super-for-individuals-and-families/self-managed-super-funds-smsf/paying-smsf-benefits/death-of-an-smsf-member" },
+                    { label: "ATO — Division 296 (Div 296 survivorship risk s.13)", href: "https://www.ato.gov.au/about-ato/new-legislation/in-detail/superannuation/better-targeted-superannuation-concessions" },
                   ].map((s) => (
                     <a key={s.href} href={s.href} target="_blank" rel="noopener noreferrer"
                       className="font-mono text-[10px] text-blue-700 underline hover:text-blue-900 transition">
@@ -563,16 +588,25 @@ export default function DeathBenefitTaxWallPage() {
                     </a>
                   ))}
                 </div>
-                <p className="font-mono text-[10px] text-blue-500">
-                  Note: Super law (SIS Act) and tax law (ITAA 1997) define dependants differently. Adult children can receive a death benefit under super law but pay 17% tax under tax law. These are two separate legislative definitions — a common source of confusion.
-                </p>
               </div>
+            </div>
+          </section>
+
+          {/* DISCLAIMER */}
+          <section>
+            <div className="rounded-xl border border-neutral-200 bg-neutral-50 px-5 py-4">
+              <p className="font-mono text-[10px] uppercase tracking-widest text-neutral-400 mb-1">General advice warning</p>
+              <p className="text-xs leading-relaxed text-neutral-500">
+                The information on this page is general in nature and does not constitute personal financial, legal, or tax advice. SuperTaxCheck provides decision-support tools based on the Income Tax Assessment Act 1997 and Treasury Laws Amendment Act enacted 10 March 2026. Always engage a qualified SMSF specialist before acting.{" "}
+                <Link href="/privacy" className="underline hover:text-neutral-700">Privacy</Link> ·{" "}
+                <Link href="/terms" className="underline hover:text-neutral-700">Terms</Link>
+              </p>
             </div>
           </section>
         </main>
 
         {/* FOOTER */}
-        <footer className="border-t border-neutral-200 bg-white mt-16">
+        <footer className="border-t border-neutral-200 bg-white mt-8">
           <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-4 px-6 py-6">
             <Link href="/" className="font-serif font-bold text-neutral-950">SuperTaxCheck</Link>
             <div className="flex gap-5">
@@ -583,9 +617,7 @@ export default function DeathBenefitTaxWallPage() {
                 { label: "Terms", href: "/terms" },
                 { label: "Contact", href: "mailto:hello@supertaxcheck.com.au" },
               ].map((link) => (
-                <a key={link.label} href={link.href} className="font-mono text-xs text-neutral-400 transition hover:text-neutral-700">
-                  {link.label}
-                </a>
+                <a key={link.label} href={link.href} className="font-mono text-xs text-neutral-400 transition hover:text-neutral-700">{link.label}</a>
               ))}
             </div>
           </div>
