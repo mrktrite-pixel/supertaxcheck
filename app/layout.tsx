@@ -27,9 +27,10 @@ const dmMono = DM_Mono({
 const LAST_VERIFIED = "2026-04-14";
 
 export const metadata: Metadata = {
-  title: "SuperTaxCheck | Division 296 Tax Tools for SMSF Trustees",
+  title: "TaxCheckNow | Tax Law Change Calculators — UK, NZ and Canada",
   description:
-    "Australia's only super tax calculators built on the Division 296 Act enacted 10 March 2026. Div 296 Wealth Eraser, Death Benefit Tax-Wall Calculator, and Super-to-Trust Exit Logic System for SMSF (Self-Managed Super Fund) trustees with $3M+ in superannuation.",
+    "Free tax law change calculators for UK, New Zealand and Canada. Built on enacted legislation — not drafts. HMRC nudge letters, NZ pension transfers, 
+Canadian capital gains. Verified facts only.",
   keywords: [
     "Division 296",
     "Div 296 Wealth Eraser",
