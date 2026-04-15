@@ -5,15 +5,15 @@ import Div296WealthEraserCalculator from "./Div296WealthEraserCalculator";
 import { getCountdownData } from "@/lib/countdown";
 
 export const metadata: Metadata = {
-  title: "Div 296 Wealth Eraser — June 30 Cost-Base Reset Calculator | SuperTaxCheck",
+  title: "New Super Tax — June 30 Cost-Base Reset Calculator | SuperTaxCheck",
   description:
-    "SMSF (Self-Managed Super Fund) trustees have a single, one-time opportunity to reset their cost base before 30 June 2026. The election is irrevocable and all-or-nothing. Find out what it costs you to do nothing. Built on Division 296 Act s.42, enacted 10 March 2026.",
+    "Before July 1, there is a one-time chance to lock in today's value on everything in your super fund. Miss June 30 and it is gone permanently. Free calculator shows what it is worth for your fund. Built on Division 296 Act s.42, enacted 10 March 2026.",
   alternates: {
     canonical: "https://supertaxcheck.com.au/check/div296-wealth-eraser",
   },
   openGraph: {
-    title: "Div 296 Wealth Eraser — June 30 Cost-Base Reset Calculator",
-    description: "Find out what it costs you to do nothing. Before June 30. Free calculator built on Division 296 Act s.42, enacted 10 March 2026.",
+    title: "New Super Tax — June 30 Cost-Base Reset Calculator",
+    description: "Find out what the June 30 deadline is worth for your super fund. Free. 2 minutes. No signup.",
     url: "https://supertaxcheck.com.au/check/div296-wealth-eraser",
     siteName: "SuperTaxCheck",
     type: "website",
@@ -22,64 +22,136 @@ export const metadata: Metadata = {
 
 const lastVerified = "April 2026";
 
-const thresholds = {
-  tier1Balance: "$3,000,000",
-  tier2Balance: "$10,000,000",
-  tier1Rate: "30%",
-  tier2Rate: "40%",
-  enacted: "10 March 2026",
-  valuationDate: "30 June 2026",
-  commencement: "1 July 2026",
-  indexation1: "$150,000",
-  indexation2: "$500,000",
-};
+// ── DATA ───────────────────────────────────────────────────────────────────
 
-// Worked example for GEO extraction
-const workedExample = {
-  balance: "$4,500,000",
-  costBase: "$800,000",
-  marketValue: "$2,400,000",
-  gain: "$1,600,000",
-  proportion: "33.3%",
-  saving: "$80,000",
-  withoutReset: "When this asset is eventually sold, without the reset, approximately $80,000 in additional Div 296 tax would be payable on the pre-2026 gain.",
-};
+const accountantQuestions = [
+  {
+    q: "Has my super fund done the June 30 cost-base reset — and should it?",
+    why: "This is the most important question. Many accountants have not raised it with clients yet. If your fund has significant growth in any asset since you bought it, the answer matters a lot.",
+  },
+  {
+    q: "What is the current market value of each asset in my fund, and what did we pay for it originally?",
+    why: "You need both numbers to decide. The gap between what you paid and what it is worth today is what the new tax will eventually hit — unless you lock it in before June 30.",
+  },
+  {
+    q: "Do I have any assets in the fund worth less than I paid for them?",
+    why: "The reset applies to every asset — including the ones that have gone down. If you have a loss-position asset, resetting it locks in a lower cost base, which could mean more tax on that asset later. You need to know before you decide.",
+  },
+  {
+    q: "If I do the reset, what does the valuation cost and who needs to do it?",
+    why: "Assets must be independently valued on exactly 30 June 2026. For property in your fund, this means getting a valuer in. This costs money and takes time to organise. The sooner you know whether you are doing it, the better.",
+  },
+  {
+    q: "What happens if I do nothing before June 30?",
+    why: "Ask for the dollar figure. Not a percentage. Not 'it depends.' Ask your accountant to model what the new tax costs your fund over the next 10 years if you do not lock in today's values. That number tells you whether this matters for your fund.",
+  },
+];
+
+const deadlineItems = [
+  {
+    when: "Right now",
+    what: "Decide whether to get assets valued",
+    consequence: "If you leave it too late, you cannot get a valuation done by June 30. Property valuers book out. Start the conversation now.",
+    urgent: true,
+  },
+  {
+    when: "Before June 30",
+    what: "Get independent valuations on all SMSF assets",
+    consequence: "If you want to do the reset, your assets must be valued at market price on exactly June 30. Not May. Not July. June 30.",
+    urgent: true,
+  },
+  {
+    when: "June 30, 2026",
+    what: "The valuation date — hard deadline",
+    consequence: "Miss this and the cost-base reset is gone permanently. There is no extension. No second chance. The right to lock in today's values is extinguished forever.",
+    urgent: true,
+  },
+  {
+    when: "When your 2026-27 tax return is due",
+    what: "Lodge the formal election with the ATO",
+    consequence: "This is when you formally tell the ATO you are opting in. But the valuation must already be done from June 30 — you cannot value the assets later and backdate it.",
+    urgent: false,
+  },
+  {
+    when: "July 1, 2026",
+    what: "New super tax starts",
+    consequence: "From this date, earnings on super balances above $3 million attract additional tax. This is when the reset starts protecting you — or when the missed opportunity starts costing you.",
+    urgent: false,
+  },
+  {
+    when: "2027-28 onwards",
+    what: "ATO issues first Division 296 tax assessments",
+    consequence: "The first bills arrive. If you did the reset, pre-2026 gains are protected. If you did not, every dollar of growth since you bought the asset is in the tax pool.",
+    urgent: false,
+  },
+];
 
 const faqs = [
   {
-    question: "What is the Division 296 cost-base reset election?",
-    answer: "SMSF (Self-Managed Super Fund) trustees can make a one-time, irrevocable election to reset the notional cost base of all fund assets to their market value as at 30 June 2026. This protects all pre-2026 capital gains from Division 296 tax permanently. The election is all-or-nothing — you cannot choose individual assets. Source: Division 296 Act s.42, enacted 10 March 2026.",
+    question: "What is this June 30 deadline I keep hearing about?",
+    answer: "Before June 30, you can lock in the current value of everything in your super fund as the starting point for the new tax. This means the new tax only applies to growth after June 30 — not the decades of growth already sitting in your fund. You can only do this once. And it applies to every asset in your fund — you cannot choose which ones. Miss June 30 and this option is gone permanently. Source: Division 296 Act s.42, enacted 10 March 2026.",
   },
   {
-    question: "Why does June 30 2026 matter for the cost-base reset?",
-    answer: "June 30 2026 is the valuation date. Assets must be independently valued at market price on this exact date for the election to be valid. Missing this date permanently extinguishes the right to make the election. The election form is lodged with the 2026-27 SMSF annual return, but the valuation must be locked on June 30. Most advice incorrectly states the deadline is when the tax return is due.",
+    question: "What is the new super tax and how much is it?",
+    answer: "From July 1 this year, if your total super balance is over $3 million, the ATO takes an extra cut of the earnings above that. Not on the whole balance — just on the growth above $3 million. The additional rate is 15% on earnings between $3M and $10M — bringing the total to 30%. Above $10M it goes to 40%. On a $4M fund earning 7% a year, that is roughly $4,200 in extra tax annually. On a $6M fund it is closer to $18,900. Source: Division 296, ITAA 1997 (Subdiv 296-B), enacted 10 March 2026.",
   },
   {
-    question: "Can I choose which assets to include in the cost-base reset?",
-    answer: "No. This is one of the most common misconceptions about the Division 296 cost-base reset. The election applies at the fund level — every asset resets, including those in a loss position. You cannot select individual assets. This all-or-nothing nature makes the decision more complex than it first appears.",
+    question: "Can I choose which assets to include in the reset?",
+    answer: "No — and this catches a lot of people out. You either reset everything or reset nothing. Every asset in your fund resets — including the ones that have gone down in value since you bought them. If you have a property that has dropped, that asset's cost base also resets to the lower value. This makes the decision more complicated than it first sounds. Run the calculator to see how it nets out for your fund. Source: Division 296 Act s.42.",
   },
   {
-    question: "What if my SMSF holds assets worth less than I paid for them?",
-    answer: "If your SMSF (Self-Managed Super Fund) holds any asset currently worth less than its original purchase price, that cost base also resets to the lower market value under the election. This means opting in is not always beneficial. Any fund with loss-position assets must model the impact carefully before making the irrevocable election.",
+    question: "My super fund has a commercial property. Does this affect me?",
+    answer: "Probably yes — and property funds are often the ones where the reset matters most. If you bought a commercial property 15 years ago for $800,000 and it is now worth $2.4 million, that $1.6 million growth is sitting in your fund unprotected. The new tax will eventually hit a share of that gain when the property is sold. The reset locks in today's $2.4 million value so only future growth above that is taxed. But you need an independent valuation on exactly June 30. Source: Division 296 Act s.42, ATO guidance.",
   },
   {
-    question: "Does the cost-base reset affect normal SMSF tax or CGT?",
-    answer: "No. The reset is for Division 296 purposes only. It does not affect the fund's normal income tax, CGT calculations, or CGT discount eligibility. The fund will maintain two separate cost bases — one for normal SMSF tax and one for Division 296 — which must be retained for 5 years.",
+    question: "Does the reset affect my normal tax or CGT?",
+    answer: "No — and this is important. The reset is only for the new Division 296 tax. Your normal SMSF income tax and capital gains tax are completely unaffected. Your fund will keep two sets of cost base records — one for normal tax (unchanged) and one for the new tax (reset to June 30 values). You keep these records for 5 years. Source: Division 296 Act s.42.",
   },
   {
-    question: "Who can make the cost-base reset election?",
-    answer: "The election is available to SMSFs (Self-Managed Super Funds) and small APRA funds only. It is not available for industry funds or retail super funds. Any SMSF can opt in — even if no member currently exceeds $3M — if members expect to exceed the threshold in future and the fund has already accrued large gains.",
+    question: "My fund is currently worth less than $3 million. Should I still do the reset?",
+    answer: "Possibly yes — and this surprises people. The reset is available to any SMSF, even if no member is currently above $3 million. If your fund has significant unrealised gains and you expect your balance to grow above $3 million in coming years, locking in today's values now protects all that existing growth permanently. Talk to your accountant about whether your fund is likely to cross the threshold and whether the reset makes sense as forward protection. Source: ATO guidance, Division 296 Act s.42.",
+  },
+  {
+    question: "What if I have assets in a unit trust inside my super fund?",
+    answer: "This is a trap many funds do not know about. The reset only applies to assets held directly by your SMSF. If your fund holds assets through a unit trust or private company inside the fund, those assets cannot be reset. All the growth on those assets since you bought them stays fully exposed to the new tax when sold. If your fund holds property through a unit trust, you need to talk to your accountant urgently. Source: Sladen Legal, Phil Broderick, SMS Magazine, February 2026.",
+  },
+  {
+    question: "How long do I have and what should I do right now?",
+    answer: "You have until June 30 for the valuation — that is the hard deadline. For property in your fund, you should be organising a valuer now. Valuers book out and June 30 is busy. For shares and cash, valuation is straightforward on the day. The first thing to do is run the calculator on this page. It takes 2 minutes and shows you whether the reset is worth doing for your fund. Then take the result to your accountant.",
   },
 ];
 
-const aiDriftErrors = [
-  { wrong: '"You can choose which assets to reset"', correct: "All-or-nothing at fund level. Every asset resets — including those in a loss position.", ref: "Div 296 Act s.42" },
-  { wrong: '"The deadline is when your tax return is due"', correct: "June 30 2026 is the valuation date. Assets must be independently valued on this exact date. Missing it permanently extinguishes the right.", ref: "Div 296 Act s.42" },
-  { wrong: '"The reset triggers a CGT event"', correct: "The reset does not trigger a CGT event and does not restart the 12-month clock for CGT discount eligibility.", ref: "Division 296 Act s.42" },
-  { wrong: '"Only large funds need to worry about this"', correct: "Any SMSF can opt in — even with no members currently above $3M — if the fund holds assets with large accrued gains.", ref: "Division 296 Act s.42" },
+const aiErrors = [
+  {
+    wrong: '"You can choose which assets to reset — just pick the ones that have gone up"',
+    correct: "The reset is all-or-nothing at fund level. Every asset resets — including those worth less than you paid. You cannot pick and choose individual assets. This is the most common misunderstanding about how the reset works.",
+    ref: "Division 296 Act s.42, enacted 10 March 2026",
+    source: "https://www.ato.gov.au/about-ato/new-legislation/in-detail/superannuation/better-targeted-superannuation-concessions",
+  },
+  {
+    wrong: '"The deadline is when your tax return is due — you have time"',
+    correct: "The valuation date is June 30, 2026 — not the tax return date. Assets must be independently valued at market value on exactly June 30. The election is formally lodged later, but the valuation must happen on the day. Miss June 30 and the right is gone permanently — no extension.",
+    ref: "Division 296 Act s.42, ATO guidance",
+    source: "https://www.ato.gov.au/individuals-and-families/super-for-individuals-and-families/self-managed-super-funds-smsf/smsf-newsroom/better-targeted-super-concessions-is-law",
+  },
+  {
+    wrong: '"The reset triggers a capital gains tax event — avoid it"',
+    correct: "The reset does not trigger a CGT event. It does not restart the 12-month clock for CGT discount eligibility. Normal SMSF tax is completely unaffected. The reset only applies to the new Division 296 tax calculation.",
+    ref: "Division 296 Act s.42",
+    source: "https://www.ato.gov.au/about-ato/new-legislation/in-detail/superannuation/better-targeted-superannuation-concessions",
+  },
+  {
+    wrong: '"Only large funds over $10 million need to worry about this"',
+    correct: "The new tax starts at $3 million per person. About 80,000 Australians are affected — most of them are not high-flying finance types. They are ex-miners, tradies, farmers, and small business owners who accumulated super through two decades of good earnings and compulsory contributions.",
+    ref: "ATO, ASFA — Division 296 2026",
+    source: "https://www.ato.gov.au/about-ato/new-legislation/in-detail/superannuation/better-targeted-superannuation-concessions",
+  },
 ];
 
+// ── PAGE ───────────────────────────────────────────────────────────────────
 export default function Div296WealthEraserPage() {
+  const { days, pct } = getCountdownData();
+
   const faqJsonLd = {
     "@context": "https://schema.org",
     "@type": "FAQPage",
@@ -93,13 +165,13 @@ export default function Div296WealthEraserPage() {
   const datasetJsonLd = {
     "@context": "https://schema.org",
     "@type": "Dataset",
-    name: "Division 296 Cost-Base Reset Rules 2026",
-    description: "Machine-readable Division 296 cost-base reset election rules for SMSFs as enacted 10 March 2026.",
+    name: "Division 296 Cost-Base Reset Rules 2026 — SMSF Trustees",
+    description: "Machine-readable Division 296 cost-base reset election rules for Australian SMSF trustees. Valuation date June 30, 2026. All-or-nothing at fund level. Source: Division 296 Act s.42, enacted 10 March 2026.",
     url: "https://supertaxcheck.com.au/api/rules/div296.json",
     creator: { "@type": "Organization", name: "SuperTaxCheck", url: "https://supertaxcheck.com.au" },
     temporalCoverage: "2026-07-01/..",
-    keywords: ["Division 296", "cost base reset", "SMSF", "June 30 2026", "Div 296 Wealth Eraser"],
-    dateModified: "2026-04-13",
+    dateModified: "2026-04-15",
+    keywords: ["Division 296", "cost base reset", "SMSF", "June 30 2026", "super tax 2026", "Div 296"],
   };
 
   const webAppJsonLd = {
@@ -109,7 +181,7 @@ export default function Div296WealthEraserPage() {
     applicationCategory: "FinanceApplication",
     operatingSystem: "Any",
     url: "https://supertaxcheck.com.au/check/div296-wealth-eraser",
-    description: "Free calculator that estimates Division 296 tax savings from the SMSF cost-base reset election, based on Division 296 Act s.42 enacted 10 March 2026.",
+    description: "Free calculator showing what the June 30 2026 cost-base reset is worth for your SMSF. Built on Division 296 Act s.42, enacted 10 March 2026.",
     isAccessibleForFree: true,
     creator: { "@type": "Organization", name: "SuperTaxCheck" },
     offers: [
@@ -118,55 +190,18 @@ export default function Div296WealthEraserPage() {
     ],
   };
 
-  // GAP 1: Live countdown — server-side, accurate on every request
-  const { days, pct } = getCountdownData();
-
-  // GAP 4: HowTo schema
   const howToJsonLd = {
     "@context": "https://schema.org",
     "@type": "HowTo",
-    name: "How to calculate your Division 296 cost-base reset saving",
-    description: "Use the Div 296 Wealth Eraser to estimate how much Div 296 tax you can protect before the June 30 2026 valuation deadline.",
+    name: "How to calculate what the June 30 cost-base reset is worth for your super fund",
+    description: "A free 2-minute calculator showing how much Division 296 tax the June 30 cost-base reset can protect for your SMSF.",
     totalTime: "PT2M",
     step: [
-      {
-        "@type": "HowToStep",
-        name: "Enter your total super balance",
-        text: "Add up all your super accounts across all funds. Include both accumulation and pension phase balances.",
-        position: 1,
-      },
-      {
-        "@type": "HowToStep",
-        name: "Enter the original cost of your main SMSF asset",
-        text: "The original purchase price your SMSF paid for its main investment — property, shares, or other asset.",
-        position: 2,
-      },
-      {
-        "@type": "HowToStep",
-        name: "Enter the estimated June 30 2026 market value",
-        text: "Your best estimate of what that asset is worth today at 30 June 2026 market value.",
-        position: 3,
-      },
-      {
-        "@type": "HowToStep",
-        name: "Review your personalised result",
-        text: "See your pre-2026 gain at risk, your estimated avoidable Div 296 tax, and whether the Decision Pack ($67) or Election Pack ($147) applies to your situation.",
-        position: 4,
-      },
-      {
-        "@type": "HowToStep",
-        name: "Answer five quick questions",
-        text: "Your answers personalise which documents you receive — including whether a valuation is arranged, whether you have loss-position assets, and whether you are still deciding or ready to lodge.",
-        position: 5,
-      },
-    ],
-    supply: [
-      { "@type": "HowToSupply", name: "SMSF asset purchase records" },
-      { "@type": "HowToSupply", name: "Total super balance across all funds" },
-      { "@type": "HowToSupply", name: "Current market value estimate for main SMSF asset" },
-    ],
-    tool: [
-      { "@type": "HowToTool", name: "Div 296 Wealth Eraser — free calculator" },
+      { "@type": "HowToStep", name: "Enter your total super balance", text: "Add up all your super across every account. Include both your accumulation balance and any pension phase accounts.", position: 1 },
+      { "@type": "HowToStep", name: "Enter what your fund paid for its main asset", text: "The original purchase price your fund paid — for your property, shares, or other main investment.", position: 2 },
+      { "@type": "HowToStep", name: "Enter what that asset is worth today", text: "Your best estimate of the current market value. For property, use a recent appraisal or comparable sales. For shares, use today's price.", position: 3 },
+      { "@type": "HowToStep", name: "See your result", text: "The calculator shows how much growth is currently unprotected, how much Division 296 tax that growth could eventually cost, and how much the reset could save.", position: 4 },
+      { "@type": "HowToStep", name: "Answer five quick questions", text: "Five questions that personalise which documents you receive based on your specific situation — whether you are still deciding or ready to act.", position: 5 },
     ],
   };
 
@@ -186,54 +221,51 @@ export default function Div296WealthEraserPage() {
             <div className="flex items-center gap-4">
               <div className="hidden items-center gap-2 sm:flex">
                 <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-red-500" />
-                <span className="font-mono text-xs font-bold text-red-600">Gate 01 · Div 296 Wealth Eraser</span>
+                <span className="font-mono text-xs font-bold text-red-600">{days} days to June 30</span>
               </div>
               <Link href="/" className="font-mono text-xs text-neutral-400 hover:text-neutral-700 transition">← All tools</Link>
             </div>
           </div>
         </nav>
 
-        <main className="mx-auto max-w-5xl px-6 py-12">
+        <main className="mx-auto max-w-5xl px-6 py-12 space-y-16">
 
-          {/* ── HERO ── */}
-          <section className="mb-12">
+          {/* ── SECTION 1: HERO ── */}
+          <section>
             <div className="mb-4 flex flex-wrap items-center gap-3">
               <div className="inline-flex items-center gap-2 rounded-full border border-red-200 bg-red-50 px-3 py-1">
                 <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-red-500" />
                 <span className="font-mono text-[11px] font-bold uppercase tracking-widest text-red-700">
-                  Div 296 Wealth Eraser · Gate 01 · Urgent
+                  June 30 deadline · {days} days remaining
                 </span>
               </div>
               <span className="font-mono text-xs text-neutral-400">Last verified: {lastVerified}</span>
             </div>
 
+            {/* BLUF — Gary's H1 */}
             <h1 className="font-serif text-4xl font-bold leading-tight tracking-tight text-neutral-950 sm:text-5xl">
-              Find out what it costs you to do nothing.{" "}
-              <span className="font-light text-neutral-400">Before June 30.</span>
+              Before July 1, there is a one-time chance to lock in today's value on your super fund.{" "}
+              <span className="font-light text-neutral-400">Miss June 30 and it is gone permanently.</span>
             </h1>
 
-            {/* GAP 8: Sharper answer-first paragraph — BLUF structure for AI extraction */}
-            <p className="mt-4 max-w-3xl text-base leading-relaxed text-neutral-600">
-              <strong className="text-neutral-950">Division 296 tax — enacted 10 March 2026 — adds a 30% effective tax rate on SMSF earnings above $3 million from 1 July 2026.</strong>{" "}
-              SMSF (Self-Managed Super Fund) trustees have until{" "}
-              <strong className="text-neutral-950">30 June 2026</strong> to make a one-time, irrevocable election
-              to reset the cost base of all fund assets to their current market value — protecting all pre-2026
-              capital gains from Division 296 tax permanently. The election is{" "}
-              <strong className="text-neutral-950">all-or-nothing</strong> at fund level. Individual assets cannot
-              be selected.{" "}
-              <span className="font-mono text-sm text-neutral-400">
-                Source: Division 296 Act s.42, enacted 10 March 2026.
-              </span>
-            </p>
-
-            {/* AI drift warning */}
-            <div className="mt-5 max-w-3xl rounded-xl border border-amber-200 bg-amber-50 px-4 py-3">
-              <p className="font-mono text-[10px] uppercase tracking-widest text-amber-700">What AI gets wrong about this</p>
-              <p className="mt-1 text-sm text-amber-900">
-                Most AI tools state you can select individual assets for the reset.{" "}
-                <strong>You cannot.</strong> The election applies at fund level — every asset resets including those in a loss position. This calculator applies the enacted March 2026 law.
+            {/* "Your accountant hasn't called you" moment */}
+            <div className="mt-5 max-w-3xl rounded-xl border border-amber-200 bg-amber-50 px-5 py-4">
+              <p className="text-sm font-semibold text-amber-900 mb-1">
+                Your accountant probably hasn't called you about this yet.
+              </p>
+              <p className="text-sm text-amber-800">
+                The new super tax law passed on 10 March 2026 — six weeks ago. Most accountants see their clients once a year at tax time. That meeting is probably months away. This calculator takes 2 minutes and tells you whether you need to pick up the phone — or whether they do.
               </p>
             </div>
+
+            {/* BLUF paragraph — answer first */}
+            <p className="mt-5 max-w-3xl text-base leading-relaxed text-neutral-600">
+              <strong className="text-neutral-950">From July 1, if your super is over $3 million, the ATO takes an extra cut of the earnings above that.</strong>{" "}
+              But before June 30 you can lock in today's values across everything in your fund — so the new tax only applies to growth from here, not the decades of growth already sitting in there.{" "}
+              The catch: it is a one-time decision, it applies to every asset in your fund, and{" "}
+              <strong className="text-neutral-950">if you miss June 30 it is gone permanently.</strong>{" "}
+              <span className="font-mono text-sm text-neutral-400">Source: Division 296 Act s.42, enacted 10 March 2026.</span>
+            </p>
 
             {/* Two-column layout */}
             <div className="mt-8 grid gap-6 lg:grid-cols-[1fr_300px]">
@@ -241,10 +273,10 @@ export default function Div296WealthEraserPage() {
               {/* LEFT: Calculator */}
               <Div296WealthEraserCalculator />
 
-              {/* RIGHT: Source + facts */}
+              {/* RIGHT: Sidebar */}
               <div className="space-y-4">
 
-                {/* Deadline — GAP 1: Live server-side countdown */}
+                {/* Countdown */}
                 <div className="rounded-2xl border border-red-200 bg-red-50 p-5 text-center">
                   <p className="font-mono text-[10px] uppercase tracking-widest text-red-600">June 30 valuation date</p>
                   <p className="mt-2 font-serif text-5xl font-bold text-red-700">{days}</p>
@@ -253,147 +285,207 @@ export default function Div296WealthEraserPage() {
                     <div className="h-1.5 rounded-full bg-red-500" style={{ width: `${pct}%` }} />
                   </div>
                   <p className="mt-1.5 font-mono text-[10px] text-red-400">{pct}% of the window has closed</p>
-                  <p className="mt-2 text-xs leading-relaxed text-red-700">
-                    SMSF assets must be independently valued on this exact date. Missing it permanently extinguishes the right.
+                  <p className="mt-3 text-xs leading-relaxed text-red-700">
+                    Assets must be independently valued on exactly this date. Organise your valuer now — they book out.
                   </p>
                 </div>
 
-                {/* What you get */}
+                {/* Two products */}
                 <div className="rounded-2xl border border-neutral-200 bg-white p-5">
-                  <p className="font-mono text-[10px] uppercase tracking-widest text-neutral-400 mb-4">Two products — one decision</p>
+                  <p className="font-mono text-[10px] uppercase tracking-widest text-neutral-400 mb-4">Two packs. One decision.</p>
                   <div className="mb-4">
                     <div className="mb-2 flex items-center gap-2">
                       <span className="rounded-md bg-neutral-100 px-2 py-0.5 font-mono text-xs font-bold text-neutral-700">$67</span>
-                      <span className="text-sm font-semibold text-neutral-900">Div 296 Decision Pack</span>
+                      <span className="text-sm font-semibold text-neutral-900">Decision Pack</span>
                     </div>
-                    <p className="text-xs text-neutral-500 mb-2">Should I elect? And if so, how?</p>
+                    <p className="text-xs text-neutral-500 mb-2">Should I do the reset? Help me decide.</p>
                     <ul className="space-y-1 text-xs text-neutral-600">
-                      {["Your personal decision model", "All-or-nothing risk assessment", "June 30 valuation checklist", "Director Minute template", "Accountant briefing document", "Loss-position asset guide"].map((i) => (
-                        <li key={i} className="flex items-start gap-1.5"><span className="mt-0.5 shrink-0 text-emerald-500">✓</span>{i}</li>
+                      {["Your personal decision model", "All-or-nothing risk check", "June 30 valuation checklist", "Director Minute template", "Brief for your accountant", "Loss-position asset guide"].map((item) => (
+                        <li key={item} className="flex items-start gap-1.5">
+                          <span className="mt-0.5 shrink-0 text-emerald-500">✓</span>{item}
+                        </li>
                       ))}
                     </ul>
                   </div>
-                  <div className="border-t border-neutral-100 pt-3">
+                  <div className="border-t border-neutral-100 pt-4">
                     <div className="mb-2 flex items-center gap-2">
                       <span className="rounded-md bg-blue-100 px-2 py-0.5 font-mono text-xs font-bold text-blue-700">$147</span>
-                      <span className="text-sm font-semibold text-neutral-900">Div 296 Election Pack</span>
+                      <span className="text-sm font-semibold text-neutral-900">Election Pack</span>
                     </div>
-                    <p className="text-xs text-neutral-500 mb-2">I'm electing. Give me everything to lodge.</p>
+                    <p className="text-xs text-neutral-500 mb-2">I am doing the reset. Give me everything to lodge it correctly.</p>
                     <ul className="space-y-1 text-xs text-neutral-600">
-                      {["Everything in Decision Pack", "ATO Approved Form Template", "Trustee Resolution document", "Asset Valuation Record template", "Two-Cost-Base Record System"].map((i) => (
-                        <li key={i} className="flex items-start gap-1.5"><span className="mt-0.5 shrink-0 text-blue-500">✓</span>{i}</li>
+                      {["Everything in the Decision Pack", "ATO Approved Form template", "Trustee Resolution", "Asset Valuation Record", "Two-Cost-Base Record System"].map((item) => (
+                        <li key={item} className="flex items-start gap-1.5">
+                          <span className="mt-0.5 shrink-0 text-blue-500">✓</span>{item}
+                        </li>
                       ))}
                     </ul>
                   </div>
                 </div>
 
-                {/* Law + dataset link */}
-                <div className="rounded-2xl border border-blue-100 bg-blue-50 p-5">
-                  <p className="font-mono text-[10px] uppercase tracking-widest text-blue-600 mb-3">Legislative basis</p>
-                  <div className="space-y-1 text-sm text-blue-900">
-                    <p><strong>Division 296 Act s.42</strong></p>
-                    <p>Enacted: {thresholds.enacted}</p>
-                    <p>Commencement: {thresholds.commencement}</p>
-                    <p>Valuation date: {thresholds.valuationDate}</p>
+                {/* Legal */}
+                <div className="rounded-2xl border border-blue-100 bg-blue-50 p-4">
+                  <p className="font-mono text-[10px] uppercase tracking-widest text-blue-600 mb-2">Built on the actual law</p>
+                  <p className="text-xs text-blue-900 mb-3">Not the 2024 draft. The law that passed Parliament on 10 March 2026.</p>
+                  <div className="space-y-1">
+                    <a href="https://www.ato.gov.au/individuals-and-families/super-for-individuals-and-families/self-managed-super-funds-smsf/smsf-newsroom/better-targeted-super-concessions-is-law" target="_blank" rel="noopener noreferrer" className="block font-mono text-[10px] text-blue-700 underline hover:text-blue-900 transition">ATO — Division 296 is now law ↗</a>
+                    <a href="https://www.ato.gov.au/about-ato/new-legislation/in-detail/superannuation/better-targeted-superannuation-concessions" target="_blank" rel="noopener noreferrer" className="block font-mono text-[10px] text-blue-700 underline hover:text-blue-900 transition">ATO — Better Targeted Super Concessions ↗</a>
+                    <a href="https://www.legislation.gov.au/latest/C2026A00013" target="_blank" rel="noopener noreferrer" className="block font-mono text-[10px] text-blue-700 underline hover:text-blue-900 transition">Treasury Laws Amendment Act 2026 — full text ↗</a>
                   </div>
-                  <a
-                    href="/api/rules/div296.json"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="mt-3 inline-flex items-center gap-1 font-mono text-[10px] text-blue-600 hover:text-blue-800 transition underline"
-                  >
-                    View machine-readable rules dataset →
-                  </a>
-                </div>
-
-                {/* Disclaimer */}
-                <div className="rounded-xl border border-neutral-200 bg-neutral-50 p-4">
-                  <p className="font-mono text-[10px] uppercase tracking-widest text-neutral-400 mb-1">Disclaimer</p>
-                  <p className="text-xs leading-relaxed text-neutral-500">
-                    Decision-support tool based on Division 296 Act s.42 enacted 10 March 2026. Not financial, legal, or tax advice. The election is irrevocable. Engage a qualified SMSF specialist before lodging.
-                  </p>
                 </div>
               </div>
             </div>
           </section>
 
-          {/* ── THRESHOLD TABLE ── */}
-          <section className="mb-12">
-            <div className="rounded-2xl border border-neutral-200 bg-neutral-50 p-6">
-              <p className="font-mono text-xs uppercase tracking-widest text-neutral-400 mb-1">
-                Division 296 thresholds — enacted {thresholds.enacted}
-              </p>
-              <h2 className="font-serif text-2xl font-bold text-neutral-950 mb-4">
-                How Division 296 calculates your tax
+          {/* ── SECTION 2: PLAIN ENGLISH TRANSLATION ── */}
+          <section>
+            <div className="rounded-2xl border border-neutral-200 bg-neutral-50 p-6 sm:p-8">
+              <p className="font-mono text-[10px] uppercase tracking-widest text-neutral-400 mb-2">Plain English — what this actually means for you</p>
+              <h2 className="font-serif text-2xl font-bold text-neutral-950 mb-5">
+                Here is what is going on, without the jargon.
               </h2>
-              <div className="grid gap-3 sm:grid-cols-2">
-                {[
-                  { label: "Tier 1 threshold", value: thresholds.tier1Balance, sub: `${thresholds.tier1Rate} effective rate on earnings above this`, "data-threshold": "3000000" },
-                  { label: "Tier 2 threshold", value: thresholds.tier2Balance, sub: `${thresholds.tier2Rate} effective rate on earnings above this`, "data-threshold": "10000000" },
-                  { label: "Valuation date", value: thresholds.valuationDate, sub: "SMSF assets must be independently valued at market price on this date" },
-                  { label: "Indexation", value: thresholds.indexation1 + " steps", sub: `$3M threshold indexed in ${thresholds.indexation1} increments · $10M in ${thresholds.indexation2} increments` },
-                ].map((t) => (
-                  <div key={t.label} className="rounded-xl border border-neutral-200 bg-white px-4 py-3">
-                    <p className="font-mono text-[10px] uppercase tracking-widest text-neutral-400">{t.label}</p>
-                    <p className="mt-1 font-serif text-xl font-bold text-neutral-950">{t.value}</p>
-                    <p className="mt-0.5 text-xs text-neutral-500">{t.sub}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </section>
 
-          {/* ── WORKED EXAMPLE — GEO gold ── */}
-          <section className="mb-12">
-            <h2 className="font-serif text-2xl font-bold text-neutral-950 mb-4">
-              Worked example: how the saving is calculated
-            </h2>
-            <div className="rounded-2xl border border-neutral-200 bg-white p-6">
-              <p className="text-sm text-neutral-500 mb-4">
-                An SMSF (Self-Managed Super Fund) with a total balance of {workedExample.balance} holds a property
-                purchased in 2010 for {workedExample.costBase}, now worth {workedExample.marketValue}.
-              </p>
-              <div className="grid gap-3 sm:grid-cols-3">
-                {[
-                  { label: "Pre-2026 gain", value: workedExample.gain, sub: `${workedExample.marketValue} − ${workedExample.costBase}` },
-                  { label: "Proportion above $3M", value: workedExample.proportion, sub: `(${workedExample.balance} − $3M) ÷ ${workedExample.balance}` },
-                  { label: "Estimated Div 296 saving", value: workedExample.saving, sub: "Gain × 15% × proportion", highlight: true },
-                ].map((row) => (
-                  <div key={row.label} className={`rounded-xl border px-4 py-3 ${row.highlight ? "border-emerald-200 bg-emerald-50" : "border-neutral-100 bg-neutral-50"}`}>
-                    <p className="font-mono text-[10px] uppercase tracking-widest text-neutral-400">{row.label}</p>
-                    <p className={`mt-1 font-serif text-xl font-bold ${row.highlight ? "text-emerald-700" : "text-neutral-950"}`}>{row.value}</p>
-                    <p className="mt-0.5 font-mono text-[10px] text-neutral-400">{row.sub}</p>
-                  </div>
-                ))}
-              </div>
-              <div className="mt-4 rounded-lg border border-red-100 bg-red-50 px-4 py-3">
-                <p className="text-sm text-red-800">
-                  <strong>Without the reset:</strong> {workedExample.withoutReset}
+              <div className="space-y-5 text-sm leading-relaxed text-neutral-700">
+                <p>
+                  <strong className="text-neutral-950">Gary is 64.</strong> He worked fly-in fly-out for 22 years. Good money. Compulsory super went in every fortnight. Never thought about it much. Now he is retired and his super fund — which his accountant set up 15 years ago — holds a commercial shed in Mackay worth $1.8 million and some shares. Total: $3.4 million.
+                </p>
+                <p>
+                  From July 1 this year, Gary's fund will pay extra tax on the earnings above $3 million. Not a lot at first — maybe $3,000-4,000 a year. But if the fund keeps growing, that number grows too.
+                </p>
+                <p>
+                  <strong className="text-neutral-950">Here is the thing Gary does not know yet:</strong> before June 30, he can lock in today's value of the shed — $1.8 million — as the starting point for the new tax. That means the new tax only applies to growth in the shed's value <em>after</em> June 30. The $1.1 million the shed has grown since Gary's fund bought it in 2011? Protected permanently.
+                </p>
+                <p>
+                  If Gary does nothing — and his accountant has not called him — that $1.1 million in existing growth stays in the tax pool. When the shed is eventually sold, a share of that $1.1 million will attract the new tax. On a fund Gary's size, that is roughly <strong className="text-neutral-950">$16,500 in avoidable tax</strong> on the old growth alone.
+                </p>
+                <p>
+                  The catch: Gary cannot just reset the shed. He has to reset everything in the fund — shares too. And the reset requires an independent valuation on exactly June 30. Not June 28. Not July 2. June 30.
+                </p>
+                <p className="rounded-xl border border-neutral-200 bg-white px-4 py-3">
+                  <strong className="text-neutral-950">The bottom line:</strong> Run the calculator above. Enter your fund's rough numbers. It will tell you in 2 minutes whether this deadline matters for your fund — and by how much.
                 </p>
               </div>
-              <p className="mt-3 font-mono text-[10px] text-neutral-400">
-                Source: Division 296 Act s.42, enacted 10 March 2026 · Last verified: {lastVerified}
-              </p>
             </div>
           </section>
 
-          {/* ── AI DRIFT ── */}
-          <section className="mb-12">
-            <h2 className="font-serif text-2xl font-bold text-neutral-950 mb-4">
-              What AI gets wrong about the Division 296 cost-base reset
+          {/* ── SECTION 3: WHAT TO ASK YOUR ACCOUNTANT ── */}
+          <section>
+            <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-6 sm:p-8">
+              <p className="font-mono text-[10px] uppercase tracking-widest text-emerald-700 mb-2">Five questions to ask your accountant before June 30</p>
+              <h2 className="font-serif text-2xl font-bold text-neutral-950 mb-2">
+                Take these questions to your next meeting.
+              </h2>
+              <p className="text-sm text-neutral-600 mb-6">
+                Or send them in an email today. These are the five questions that determine whether the June 30 deadline matters for your fund — and what to do about it.
+              </p>
+              <div className="space-y-4">
+                {accountantQuestions.map((item, i) => (
+                  <div key={i} className="rounded-xl border border-emerald-100 bg-white p-4">
+                    <div className="flex items-start gap-3">
+                      <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-emerald-100 font-mono text-xs font-bold text-emerald-700">{i + 1}</span>
+                      <div>
+                        <p className="text-sm font-semibold text-neutral-900 mb-1">"{item.q}"</p>
+                        <p className="text-xs text-neutral-500"><strong className="text-neutral-600">Why this matters:</strong> {item.why}</p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <div className="mt-5 rounded-xl border border-emerald-200 bg-emerald-100 px-4 py-3">
+                <p className="text-xs text-emerald-900">
+                  <strong>Tip:</strong> Screenshot these questions or copy them into an email to your accountant today. You do not need to understand all the details — that is what they are paid for. You just need to know whether this matters for your fund before June 30.
+                </p>
+              </div>
+            </div>
+          </section>
+
+          {/* ── SECTION 4: DEADLINE TRACKER ── */}
+          <section>
+            <p className="font-mono text-xs uppercase tracking-widest text-neutral-400 mb-2">Every deadline — in order</p>
+            <h2 className="font-serif text-2xl font-bold text-neutral-950 mb-6">
+              What needs to happen and when.
+            </h2>
+            <div className="space-y-3">
+              {deadlineItems.map((item, i) => (
+                <div key={i} className={`flex gap-4 rounded-xl border p-4 ${item.urgent ? "border-red-200 bg-red-50" : "border-neutral-200 bg-white"}`}>
+                  <div className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full font-mono text-xs font-bold ${item.urgent ? "bg-red-100 text-red-700" : "bg-neutral-100 text-neutral-500"}`}>
+                    {i + 1}
+                  </div>
+                  <div className="flex-1">
+                    <div className="flex flex-wrap items-center gap-3 mb-1">
+                      <span className={`font-mono text-[10px] font-bold uppercase tracking-widest ${item.urgent ? "text-red-600" : "text-neutral-400"}`}>{item.when}</span>
+                      {item.urgent && <span className="rounded-full border border-red-200 bg-red-100 px-2 py-0.5 font-mono text-[9px] font-bold uppercase tracking-wide text-red-700">Action needed</span>}
+                    </div>
+                    <p className="text-sm font-semibold text-neutral-900 mb-1">{item.what}</p>
+                    <p className="text-xs text-neutral-500">{item.consequence}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
+
+          {/* ── SECTION 5: WORKED EXAMPLE ── */}
+          <section>
+            <p className="font-mono text-xs uppercase tracking-widest text-neutral-400 mb-2">Real numbers — how it works</p>
+            <h2 className="font-serif text-2xl font-bold text-neutral-950 mb-5">
+              What the reset is worth on a typical fund.
+            </h2>
+            <div className="rounded-2xl border border-neutral-200 bg-white p-6">
+              <p className="text-sm text-neutral-500 mb-5">
+                Gary's fund has one main asset — a commercial property. Here is how the reset calculation works.
+              </p>
+              <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4 mb-5">
+                {[
+                  { label: "Gary's total super balance", value: "$4,500,000" },
+                  { label: "What the fund paid for the property", value: "$800,000" },
+                  { label: "What it is worth today", value: "$2,400,000" },
+                  { label: "Growth at risk without the reset", value: "$1,600,000", highlight: true },
+                ].map((item) => (
+                  <div key={item.label} className={`rounded-xl border px-4 py-3 ${item.highlight ? "border-red-200 bg-red-50" : "border-neutral-100 bg-neutral-50"}`}>
+                    <p className="font-mono text-[10px] uppercase tracking-widest text-neutral-400 mb-1">{item.label}</p>
+                    <p className={`font-serif text-xl font-bold ${item.highlight ? "text-red-700" : "text-neutral-950"}`}>{item.value}</p>
+                  </div>
+                ))}
+              </div>
+              <div className="grid gap-3 sm:grid-cols-3 mb-4">
+                {[
+                  { label: "Gary's share of balance above $3M", value: "33%", sub: "($1.5M above threshold ÷ $4.5M total)" },
+                  { label: "Eventual tax on old growth if no reset", value: "~$79,000", sub: "When the property is eventually sold", red: true },
+                  { label: "That tax after the reset", value: "$0", sub: "Pre-June 30 growth is permanently protected", green: true },
+                ].map((item) => (
+                  <div key={item.label} className={`rounded-xl border px-4 py-3 ${item.red ? "border-red-200 bg-red-50" : item.green ? "border-emerald-200 bg-emerald-50" : "border-neutral-100 bg-neutral-50"}`}>
+                    <p className="font-mono text-[10px] uppercase tracking-widest text-neutral-400 mb-1">{item.label}</p>
+                    <p className={`font-serif text-xl font-bold ${item.red ? "text-red-700" : item.green ? "text-emerald-700" : "text-neutral-950"}`}>{item.value}</p>
+                    <p className="text-[11px] text-neutral-400 mt-0.5">{item.sub}</p>
+                  </div>
+                ))}
+              </div>
+              <div className="rounded-xl border border-blue-100 bg-blue-50 px-4 py-3">
+                <p className="text-sm text-blue-900">
+                  <strong>The reset saves Gary ~$79,000</strong> in future Division 296 tax on the growth that already happened. That is the value of locking in today's $2.4 million value before June 30. Source: Division 296 Act s.42, ATO guidance.
+                </p>
+              </div>
+            </div>
+          </section>
+
+          {/* ── SECTION 6: WHAT AI GETS WRONG ── */}
+          <section>
+            <p className="font-mono text-xs uppercase tracking-widest text-neutral-400 mb-2">What most AI tools get wrong about this</p>
+            <h2 className="font-serif text-2xl font-bold text-neutral-950 mb-5">
+              If you Googled this or asked ChatGPT — check these against what you were told.
             </h2>
             <div className="space-y-4">
-              {aiDriftErrors.map((item) => (
-                <div key={item.wrong} className="rounded-xl border border-neutral-200 bg-white p-5">
+              {aiErrors.map((item, i) => (
+                <div key={i} className="rounded-xl border border-neutral-200 bg-white p-5">
                   <div className="grid gap-4 sm:grid-cols-2">
                     <div>
-                      <p className="font-mono text-[10px] uppercase tracking-widest text-red-600 mb-1">Most AI says</p>
+                      <p className="font-mono text-[10px] uppercase tracking-widest text-red-600 mb-2">Most AI tools say</p>
                       <p className="text-sm italic text-neutral-500">{item.wrong}</p>
                     </div>
                     <div>
-                      <p className="font-mono text-[10px] uppercase tracking-widest text-emerald-600 mb-1">Enacted law says</p>
+                      <p className="font-mono text-[10px] uppercase tracking-widest text-emerald-600 mb-2">The enacted law says</p>
                       <p className="text-sm text-neutral-800">{item.correct}</p>
-                      <p className="mt-1 font-mono text-[10px] text-neutral-400">{item.ref}</p>
+                      <p className="mt-2 font-mono text-[10px] text-neutral-400">{item.ref}</p>
                     </div>
                   </div>
                 </div>
@@ -401,15 +493,16 @@ export default function Div296WealthEraserPage() {
             </div>
           </section>
 
-          {/* ── FAQ ── */}
-          <section className="mb-12">
+          {/* ── SECTION 7: FAQ ── */}
+          <section>
+            <p className="font-mono text-xs uppercase tracking-widest text-neutral-400 mb-2">Common questions</p>
             <h2 className="font-serif text-2xl font-bold text-neutral-950 mb-5">
-              Division 296 cost-base reset — common questions
+              Questions people are actually asking about the June 30 deadline.
             </h2>
             <div className="divide-y divide-neutral-100 overflow-hidden rounded-2xl border border-neutral-200 bg-white">
               {faqs.map((faq, i) => (
                 <details key={i} className="group">
-                  <summary className="flex cursor-pointer items-start justify-between gap-4 px-6 py-4 text-left list-none">
+                  <summary className="flex cursor-pointer list-none items-start justify-between gap-4 px-6 py-4 text-left">
                     <span className="text-sm font-semibold text-neutral-900">{faq.question}</span>
                     <span className="mt-0.5 shrink-0 font-mono text-neutral-400 group-open:hidden">+</span>
                     <span className="mt-0.5 hidden shrink-0 font-mono text-neutral-400 group-open:inline">−</span>
@@ -422,29 +515,55 @@ export default function Div296WealthEraserPage() {
             </div>
           </section>
 
-          {/* ── LAW BAR ── */}
+          {/* ── SECTION 8: PLAIN ENGLISH PAGE LINK ── */}
+          <section>
+            <div className="rounded-2xl border border-neutral-800 bg-neutral-950 p-6 sm:p-8">
+              <p className="font-mono text-[10px] uppercase tracking-widest text-neutral-400 mb-2">
+                Want the full picture?
+              </p>
+              <h2 className="font-serif text-2xl font-bold text-white mb-3">
+                We wrote a plain English guide to the new super tax. For you. Not your accountant.
+              </h2>
+              <p className="text-sm text-neutral-300 mb-5">
+                Covers all three problems the new law creates — the June 30 deadline, what happens to your super when you die, and whether moving to a family trust makes sense. Written the way a smart mate would explain it over a beer. No jargon.
+              </p>
+              <Link
+                href="/what-is-the-new-super-tax"
+                className="inline-flex items-center gap-2 rounded-xl bg-white px-6 py-3 text-sm font-bold text-neutral-950 transition hover:bg-neutral-100"
+              >
+                Read the plain English guide →
+              </Link>
+              <p className="mt-3 font-mono text-[10px] text-neutral-500">Free. No email required.</p>
+            </div>
+          </section>
+
+          {/* ── SECTION 9: LAW BAR ── */}
           <section>
             <div className="rounded-2xl border border-blue-100 bg-blue-50 px-6 py-5 space-y-4">
               <div className="flex flex-wrap items-center justify-between gap-4">
                 <div>
                   <p className="font-mono text-xs uppercase tracking-widest text-blue-600">Legislative source verification</p>
                   <p className="mt-1 max-w-xl text-sm leading-relaxed text-blue-900">
-                    All calculations derived from the Treasury Laws Amendment (Building a Stronger and Fairer Super System) Act as enacted <strong>10 March 2026</strong>, cross-referenced with ATO primary guidance. Last verified: {lastVerified}.
+                    All calculations derived from the Treasury Laws Amendment (Building a Stronger and Fairer Super System) Act, enacted <strong>10 March 2026</strong>. Cross-referenced with ATO primary guidance. Last verified: {lastVerified}.
+                  </p>
+                  <p className="mt-1 font-mono text-[10px] text-blue-500">
+                    Note: Advice published before 10 March 2026 may describe Division 296 as taxing unrealised gains. The enacted law taxes only realised earnings. Verified against ATO.gov.au.
                   </p>
                 </div>
                 <div className="flex flex-wrap gap-2">
-                  {["Div 296", "s.42", "SMSF", "CGT Reset", "ATO PCG 2026"].map((ref) => (
+                  {["Div 296 Act s.42", "SMSF", "CGT Reset", "ATO Verified"].map((ref) => (
                     <span key={ref} className="rounded-lg border border-blue-200 bg-white px-3 py-1.5 font-mono text-xs font-medium text-blue-700">{ref}</span>
                   ))}
                 </div>
               </div>
-              <div className="border-t border-blue-100 pt-4 space-y-2">
-                <p className="font-mono text-[10px] uppercase tracking-widest text-blue-600">Primary sources — verified against original legislation</p>
+              <div className="border-t border-blue-100 pt-4 space-y-1.5">
+                <p className="font-mono text-[10px] uppercase tracking-widest text-blue-600">Primary sources</p>
                 <div className="flex flex-wrap gap-x-6 gap-y-1">
                   {[
                     { label: "ATO — Better Targeted Super Concessions (official)", href: "https://www.ato.gov.au/about-ato/new-legislation/in-detail/superannuation/better-targeted-superannuation-concessions" },
-                    { label: "ATO — SMSF Newsroom: Division 296 is now law", href: "https://www.ato.gov.au/individuals-and-families/super-for-individuals-and-families/self-managed-super-funds-smsf/smsf-newsroom/better-targeted-super-concessions-is-law" },
+                    { label: "ATO — Division 296 is now law", href: "https://www.ato.gov.au/individuals-and-families/super-for-individuals-and-families/self-managed-super-funds-smsf/smsf-newsroom/better-targeted-super-concessions-is-law" },
                     { label: "Treasury Laws Amendment Act 2026 — full text", href: "https://www.legislation.gov.au/latest/C2026A00013" },
+                    { label: "SMS Magazine — Indirect asset trap (Sladen Legal)", href: "https://smsmagazine.com.au/news/2026/02/12/new-tax-will-slug-indirect-asset-income/" },
                   ].map((s) => (
                     <a key={s.href} href={s.href} target="_blank" rel="noopener noreferrer"
                       className="font-mono text-[10px] text-blue-700 underline hover:text-blue-900 transition">
@@ -452,16 +571,25 @@ export default function Div296WealthEraserPage() {
                     </a>
                   ))}
                 </div>
-                <p className="font-mono text-[10px] text-blue-500">
-                  Note: Some advice published before 10 March 2026 describes Division 296 as taxing unrealised gains. The enacted law taxes only realised earnings. Verified against: ATO — Better Targeted Super Concessions ↗, enacted 10 March 2026.
-                </p>
               </div>
+            </div>
+          </section>
+
+          {/* ── DISCLAIMER ── */}
+          <section>
+            <div className="rounded-xl border border-neutral-200 bg-neutral-50 px-5 py-4">
+              <p className="font-mono text-[10px] uppercase tracking-widest text-neutral-400 mb-1">General advice warning</p>
+              <p className="text-xs leading-relaxed text-neutral-500">
+                The information on this page is general in nature and does not constitute personal financial, legal, or tax advice. SuperTaxCheck provides decision-support tools based on the Treasury Laws Amendment Act enacted 10 March 2026. The cost-base reset election is irrevocable. Always engage a qualified SMSF specialist before making any decision.{" "}
+                <Link href="/privacy" className="underline hover:text-neutral-700">Privacy</Link> ·{" "}
+                <Link href="/terms" className="underline hover:text-neutral-700">Terms</Link>
+              </p>
             </div>
           </section>
         </main>
 
         {/* FOOTER */}
-        <footer className="border-t border-neutral-200 bg-white mt-16">
+        <footer className="border-t border-neutral-200 bg-white mt-8">
           <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-4 px-6 py-6">
             <Link href="/" className="font-serif font-bold text-neutral-950">SuperTaxCheck</Link>
             <div className="flex gap-5">
